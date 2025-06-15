@@ -1,0 +1,388 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sélection de Modèles - CV</title>
+  <style>
+    .template-section body { font-family: sans-serif; background: #f9fafb; margin:0; }
+    .template-section .container { max-width: 1200px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0001; }
+    .template-section h1 { font-size: 2em; margin-bottom: .2em; }
+    .template-section .model-list { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 32px; }
+    .template-section .model-card { background: #f3f4f6; border-radius: 8px; width: 260px; padding: 16px; box-sizing: border-box; box-shadow: 0 1px 6px #0001; display: flex; flex-direction: column; align-items: center; }
+    .template-section .model-img { width: 180px; height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; cursor: pointer; }
+    .template-section .type-badge { font-size: 12px; color: #2563eb; background: #dbeafe; border-radius: 3px; padding: 2px 8px; margin-bottom: 6px; }
+    .template-section .card-title { font-size: 1.1em; font-weight: bold; margin-bottom: 4px; text-align: center; }
+    .template-section .desc { font-size: 0.95em; color: #555; margin-bottom: 7px; text-align: center; }
+    .template-section .premium { color: #b45309; background: #fef3c7; border-radius: 3px; padding: 1px 6px; font-size: 12px; margin-bottom: 4px; }
+    .template-section .card-footer { margin-top: 12px; }
+    .template-section button { background: #2563eb; color: #fff; border: 0; border-radius: 4px; padding: 8px 14px; cursor: pointer; font-weight: 600; }
+    .template-section button:hover { background: #1e40af; }
+    .template-section .pagination { margin-top: 32px; text-align: center; }
+    .template-section .pagination button { background: #e5e7eb; color: #222; margin: 0 4px; padding: 8px 12px; border-radius: 6px; border: 0; }
+    .template-section .pagination button.active, .template-section .pagination button:hover { background: #2563eb; color: #fff; }
+    .model-img:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+
+  </style>
+</head>
+<body>
+  <div class="template-section">
+    <div class="container">
+      <h1></h1>
+      <div id="template-cv-list" class="model-list"></div>
+      <div id="template-cv-pagination" class="pagination"></div>
+    </div>
+
+ <!-- Modal -->
+<div id="modal" style="
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2vh;
+  box-sizing: border-box;
+">
+  <div style="
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    width: 95vw;
+    max-width: 1200px;
+    max-height: 95vh;
+    overflow: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  ">
+    <img id="modal-img" src="" alt="Aperçu" style="
+      max-width: 100%;
+      max-height: 75vh;
+      display: block;
+      margin: 0 auto;
+    "/>
+    <div style="
+      text-align: right;
+      margin-top: 20px;
+    ">
+      <button onclick="document.getElementById('modal').style.display='none'">Fermer</button>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Message de connexion -->
+    <div id="loginMessage" style="display:none; position:fixed; left:50%; top:50%; transform: translate(-50%, -50%); padding: 20px; background-color: #ffcc00; color: #000; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); z-index:1001;">
+      <p>Vous devez être connecté pour accéder à ce modèle. <a href="{% url 'login' %}">Connectez-vous ici</a></p>
+    </div>
+  </div>
+
+  <script>
+    const isLoggedIn = {{ request.session.utilisateur_id|yesno:"true,false" }};
+
+   const staticBase = "/static/images/";
+
+const resumeTemplates = [
+  {
+    id: "classic1",
+    name: "",
+    description: "Design épuré et professionnel, adapté à tous les secteurs",
+    image: staticBase + "cv1.png",
+    previewImage: staticBase + "cv1.png",
+    premium: false,
+    author: "Studio Comly",
+    type: "CV",
+    url: "/cv1/"
+  },
+  {
+    id: "modern1",
+    name: "",
+    description: "Design contemporain avec des touches de couleur",
+    image: staticBase + "cs2.png",
+    previewImage: staticBase + "cs2.png",
+    premium: false,
+    author: "L'atelier graphique",
+    type: "CV",
+    url: "/cv2/"
+  },
+  {
+    id: "creative1",
+    name: "",
+    description: "Idéal pour les secteurs créatifs et artistiques",
+    image: staticBase + "cv3.png",
+    previewImage: staticBase + "cv3.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv3/"
+  },
+  {
+    id: "creative2",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv4.png",
+    previewImage: staticBase + "cv4.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv4/"
+  },
+  {
+    id: "classic2",
+    name: "",
+    description: "Design épuré et professionnel, adapté à tous les secteurs",
+    image: staticBase + "cv5.png",
+    previewImage: staticBase + "cv5.png",
+    premium: false,
+    author: "Studio Comly",
+    type: "CV",
+    url: "/cv5/"
+  },
+  {
+    id: "modern2",
+    name: "",
+    description: "Design contemporain avec des touches de couleur",
+    image: staticBase + "cv6.png",
+    previewImage: staticBase + "cv6.png",
+    premium: false,
+    author: "L'atelier graphique",
+    type: "CV",
+    url: "/cv6/"
+  },
+  {
+    id: "creative3",
+    name: "",
+    description: "Idéal pour les secteurs créatifs et artistiques",
+    image: staticBase + "cv7.png",
+    previewImage: staticBase + "cv7.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv7/"
+  },
+  {
+    id: "creative4",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv8.png",
+    previewImage: staticBase + "cv8.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv8/"
+  },
+  {
+    id: "classic3",
+    name: "",
+    description: "Design épuré et professionnel, adapté à tous les secteurs",
+    image: staticBase + "cv9.png",
+    previewImage: staticBase + "cv9.png",
+    premium: false,
+    author: "Studio Comly",
+    type: "CV",
+    url: "/cv9/"
+  },
+  {
+    id: "modern3",
+    name: "",
+    description: "Design contemporain avec des touches de couleur",
+    image: staticBase + "cv10.png",
+    previewImage: staticBase + "cv10.png",
+    premium: false,
+    author: "L'atelier graphique",
+    type: "CV",
+    url: "/cv10/"
+  },
+  {
+    id: "creative5",
+    name: "",
+    description: "Idéal pour les secteurs créatifs et artistiques",
+    image: staticBase + "cv11.png",
+    previewImage: staticBase + "cv11.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv11/"
+  },
+  {
+    id: "creative6",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv12.png",
+    previewImage: staticBase + "cv12.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv12/"
+  },
+  {
+    id: "classic4",
+    name: "",
+    description: "Design épuré et professionnel, adapté à tous les secteurs",
+    image: staticBase + "cv13.png",
+    previewImage: staticBase + "cv13.png",
+    premium: false,
+    author: "Studio Comly",
+    type: "CV",
+    url: "/cv13/"
+  },
+  {
+    id: "modern4",
+    name: "",
+    description: "Design contemporain avec des touches de couleur",
+    image: staticBase + "cv14.png",
+    previewImage: staticBase + "cv14.png",
+    premium: false,
+    author: "L'atelier graphique",
+    type: "CV",
+    url: "/cv14/"
+  },
+  {
+    id: "creative7",
+    name: "",
+    description: "Idéal pour les secteurs créatifs et artistiques",
+    image: staticBase + "cv15.png",
+    previewImage: staticBase + "cv15.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv15/"
+  },
+  {
+    id: "creative8",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv16.png",
+    previewImage: staticBase + "cv16.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv16/"
+  },
+  {
+    id: "creative8",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv17.png",
+    previewImage: staticBase + "cv17.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv17/"
+  },
+  {
+    id: "creative8",
+    name: "",
+    description: "Variante colorée et artistique du modèle créatif",
+    image: staticBase + "cv18.png",
+    previewImage: staticBase + "cv18.png",
+    premium: true,
+    author: "Marine Vaude",
+    type: "CV",
+    url: "/cv18/"
+  }
+];
+
+
+    function showPreview(imgUrl) {
+      const modal = document.getElementById('modal');
+      const modalImg = document.getElementById('modal-img');
+      modalImg.src = imgUrl;
+      modal.style.display = 'flex';
+    }
+
+    function displayTemplates(listId, paginationId, templates, itemsPerPage = 12) {
+      let page = 0;
+
+      function render() {
+        const container = document.getElementById(listId);
+        container.innerHTML = "";
+
+        const slice = templates.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+        for (const template of slice) {
+          const card = document.createElement("div");
+          card.className = "model-card animate-entry";
+
+          card.innerHTML = `
+            <div class="type-badge">${template.type}</div>
+            ${template.premium ? `<div class="premium">Premium</div>` : ""}
+            <div class="model-img" style="background-image: url('${template.image}'); background-size: contain;background-repeat: no-repeat; background-position: center;" onclick="showPreview('${template.previewImage}')"></div>
+            <div class="card-title">${template.name}</div>
+            <div class="desc">${template.description}</div>
+            <div class="desc" style="color:#189D53; font-size:11px;">Auteur: ${template.author || "-"}</div>
+            <div class="card-footer">
+              <button onclick="handleTemplateClick('${template.url}')">Voir le modèle</button>
+            </div>
+          `;
+
+          container.appendChild(card);
+        }
+
+        const pag = document.getElementById(paginationId);
+        pag.innerHTML = "";
+        const totalPages = Math.ceil(templates.length / itemsPerPage);
+        for (let i = 0; i < totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = (i + 1);
+          if (i === page) btn.classList.add("active");
+          btn.onclick = function () {
+            page = i;
+            render();
+          };
+          pag.appendChild(btn);
+        }
+      }
+
+      render();
+    }
+
+    function handleTemplateClick(url) {
+      if (!isLoggedIn) {
+        document.getElementById('loginMessage').style.display = 'block';
+        setTimeout(() => document.getElementById('loginMessage').style.display = 'none', 5000);
+      } else {
+        window.location.href = url;
+      }
+    }
+
+    
+
+    // Lancer le rendu initial
+    displayTemplates("template-cv-list", "template-cv-pagination", resumeTemplates);
+
+    // ✅ Injecter les animations sans toucher au CSS existant
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .animate-entry {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeSlideIn 0.6s ease forwards;
+      }
+
+      @keyframes fadeSlideIn {
+        0% {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #modal {
+        animation: zoomIn 0.3s ease;
+      }
+
+      @keyframes zoomIn {
+        from { opacity: 0; transform: scale(0.85); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

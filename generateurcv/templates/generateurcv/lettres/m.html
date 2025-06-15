@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sélection de Modèles - Lettre de Motivation</title>
+  <style>
+    /* Style global isolé à la classe .letter-template-container */
+    .letter-template-container {
+      font-family: sans-serif;
+      background: #f9fafb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .letter-template-container .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0001;
+    }
+
+    .letter-template-container h1 {
+      font-size: 2em;
+      margin-bottom: .2em;
+    }
+
+    .letter-template-container .model-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .letter-template-container .model-card {
+      background: #f3f4f6;
+      border-radius: 8px;
+      width: 260px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 1px 6px #0001;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .letter-template-container .model-img {
+      width: 180px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .letter-template-container .type-badge {
+      font-size: 12px;
+      color: #2563eb;
+      background: #dbeafe;
+      border-radius: 3px;
+      padding: 2px 8px;
+      margin-bottom: 6px;
+    }
+
+    .letter-template-container .card-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .letter-template-container .desc {
+      font-size: 0.95em;
+      color: #555;
+      margin-bottom: 7px;
+      text-align: center;
+    }
+
+    .letter-template-container .premium {
+      color: #b45309;
+      background: #fef3c7;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .letter-template-container .card-footer {
+      margin-top: 12px;
+    }
+
+    .letter-template-container button {
+      background: #2563eb;
+      color: #fff;
+      border: 0;
+      border-radius: 4px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .letter-template-container button:hover {
+      background: #1e40af;
+    }
+
+    .letter-template-container .pagination {
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .letter-template-container .pagination button {
+      background: #e5e7eb;
+      color: #222;
+      margin: 0 4px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 0;
+    }
+
+    .letter-template-container .pagination button.active, 
+    .letter-template-container .pagination button:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    /* Aperçu modal */
+    .letter-template-container #modal {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000c;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .letter-template-container #modal div {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .letter-template-container #modal-img {
+      max-width: 60vw;
+      max-height: 65vh;
+      display: block;
+      margin: 0 auto;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="letter-template-container">
+    <div class="container">
+        <div id="template-cl-list" class="model-list"></div>
+        <div id="template-cl-pagination" class="pagination"></div>
+    </div>
+
+    <!-- Aperçu modal -->
+    <div id="modal">
+      <div>
+        <img id="modal-img" src="" alt="Aperçu"/>
+        <div style="text-align:right; margin-top: 12px;">
+          <button onclick="document.getElementById('modal').style.display='none'">Fermer</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Message pour inviter à se connecter -->
+    <div id="loginMessage" style="display:none; position:fixed; left:50%; top:50%; transform: translate(-50%, -50%); padding: 20px; background-color: #ffcc00; color: #000; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); z-index:1001;">
+      <p>Vous devez être connecté pour accéder à ce modèle. <a href="{% url 'login' %}">Connectez-vous ici</a></p>
+    </div>
+  </div>
+
+  <script>
+    // Vérifier si l'utilisateur est connecté (via Django)
+
+    const coverLetterTemplates = [
+      {
+        id: "classic-cl", name: "Classique", description: "Format traditionnel et professionnel", 
+        image: "https://images.unsplash.com/photo-1586282023700-b5721b21148a?q=80&w=500&h=700&auto=format&fit=crop", 
+        previewImage: "https://images.unsplash.com/photo-1586282023700-b5721b21148a?q=80&w=800&h=1100&auto=format&fit=crop", 
+        premium: false, author: "Céline", type: "Lettre",
+        url: "/lettre1/"
+      },
+      {
+        id: "modern-cl", name: "Moderne", description: "Présentation contemporaine et dynamique", 
+        image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=500&h=700&auto=format&fit=crop", 
+        previewImage: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&h=1100&auto=format&fit=crop", 
+        premium: true, author: "Estel_Noemiaa", type: "Lettre",
+        url: "/lettre2/"
+      },
+      // ... Ajoute ici les autres modèles selon le même format
+    ];
+
+    function displayTemplates(listId, paginationId, templates, itemsPerPage = 4) {
+      let page = 0;
+      function render() {
+        const container = document.getElementById(listId);
+        container.innerHTML = "";
+        const slice = templates.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+        for(const template of slice) {
+          let card = document.createElement("div");
+          card.className = "model-card";
+          card.innerHTML = `
+            <div class="type-badge">${template.type}</div>
+            ${template.premium ? `<div class="premium">Premium</div>` : ""}
+            <img src="${template.image}" class="model-img" alt="Modèle ${template.name}" onclick="showPreview('${template.previewImage || template.image}')">
+            <div class="card-title">${template.name}</div>
+            <div class="desc">${template.description}</div>
+            <div class="desc" style="color:#189D53; font-size:11px;">Auteur: ${template.author || "-"}</div>
+            <div class="card-footer">
+                <a href="${template.url}">
+                    <button>Voir le modèle</button>
+                </a>             
+            </div>
+          `;
+          container.appendChild(card);
+        }
+
+        const pag = document.getElementById(paginationId);
+        pag.innerHTML = "";
+        let totalPages = Math.ceil(templates.length / itemsPerPage);
+        for(let i = 0; i < totalPages; i++) {
+          let b = document.createElement("button");
+          b.textContent = (i + 1);
+          b.className = (i === page ? "active" : "");
+          b.onclick = () => { page = i; render(); }
+          pag.appendChild(b);
+        }
+      }
+      render();
+    }
+
+    window.showPreview = function(url) {
+      document.getElementById("modal-img").src = url;
+      document.getElementById("modal").style.display = "flex";
+    };
+
+    // Vérification de la connexion de l'utilisateur
+    function handleTemplateClick(url) {
+      if (!isLoggedIn) {
+        document.getElementById('loginMessage').style.display = 'block';
+        setTimeout(() => document.getElementById('loginMessage').style.display = 'none', 5000);
+      } else {
+        window.location.href = url;
+      }
+    }
+
+    displayTemplates("template-cl-list", "template-cl-pagination", coverLetterTemplates, 4);
+  </script>
+</body>
+</html>

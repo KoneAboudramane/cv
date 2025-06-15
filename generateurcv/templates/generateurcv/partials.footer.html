@@ -1,0 +1,44 @@
+<footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">{{ site_config.logo_texte }}</h3>
+          <p class="text-gray-300 text-sm">
+            Créez des CV professionnels et des lettres de motivation qui vous démarqueront.
+          </p>
+        </div>
+  
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li><a href="{% url 'templates' %}" class="hover:text-white transition-colors">Modèles</a></li>
+            <li><a href="{% url 'pricing' %}" class="hover:text-white transition-colors">Tarifs</a></li>
+            <li><a href="{% url 'about' %}" class="hover:text-white transition-colors">À propos</a></li>
+          </ul>
+        </div>
+  
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Ressources</h3>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li><a href="/blog" class="hover:text-white transition-colors">Blog</a></li>
+            <li><a href="/faq" class="hover:text-white transition-colors">FAQ</a></li>
+            <li><a href="/contact" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+  
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Légal</h3>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Politique de confidentialité</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Conditions d'utilisation</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Politique des cookies</a></li>
+          </ul>
+        </div>
+      </div>
+  
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>© 2025 CV Craft Magic. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+  

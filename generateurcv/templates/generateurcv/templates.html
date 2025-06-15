@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Nos Modèles - CV Craft</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .bg-cvcraft-blue { background-color: #2563eb; }
+    .bg-cvcraft-darkBlue { background-color: #1e40af; }
+    .text-cvcraft-blue { color: #2563eb; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+  {% include 'generateurcv/partials.nav.html' %}
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Nos Modèles</h1>
+      <p class="text-gray-600">
+        Découvrez notre collection de modèles professionnels pour vos CV et lettres de motivation.
+        <span class="block mt-2 text-sm italic">
+          Cliquez sur un modèle pour voir un aperçu détaillé avant de le sélectionner.
+        </span>
+      </p>
+
+      <div class="mt-3 bg-blue-50 p-3 rounded-md flex items-start gap-2">
+        <svg class="h-5 w-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <p class="text-sm text-blue-700">
+          L'aperçu du modèle correspond exactement à ce que vous obtiendrez en le sélectionnant.
+          Tous nos modèles sont optimisés pour l'impression et le format numérique.
+        </p>
+      </div>
+    </div>
+
+    <div class="space-y-12">
+      <!-- Section CV -->
+      <section>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-semibold">Modèles de CV</h2>
+        </div>
+
+          <!-- Les modèles de CV seront ajoutés ici dynamiquement -->
+          {% include 'generateurcv/cv/modelecv.html' %}
+
+      </section>
+
+      <!-- Section Lettres -->
+
+    </div>
+  </div>
+<!-- Section CV -->
+
+  
+    {% include 'generateurcv/partials.footer.html' %}
+    <script>
+  
+  </script>
+</body>
+</html>

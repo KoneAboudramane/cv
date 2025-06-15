@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tarification - CV Craft Magic</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .bg-cvcraft-blue { background-color: #2563eb; }
+    .bg-cvcraft-darkBlue { background-color: #1e40af; }
+    .text-cvcraft-blue { color: #2563eb; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+
+    {% include 'generateurcv/partials.nav.html' %}
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-800 mb-4">Tarification simple et transparente</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Choisissez le plan qui correspond le mieux à vos besoins et commencez à créer des CV professionnels dès aujourd'hui.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {% for plan in pricing_plans %}
+        <div class="flex flex-col rounded border p-6 bg-white {% if plan.popular %}border-cvcraft-blue shadow-lg relative{% endif %}">
+          {% if plan.popular %}
+            <div class="absolute top-0 right-0 bg-cvcraft-blue text-white py-1 px-3 text-sm font-medium rounded-bl-lg rounded-tr-md">
+              Populaire
+            </div>
+          {% endif %}
+          <h2 class="text-xl font-semibold mb-1">{{ plan.name }}</h2>
+          <p class="text-gray-600 mb-4">{{ plan.description }}</p>
+          <div class="text-3xl font-bold mb-4">
+            {{ plan.price }} {% if plan.price != '0€' %}<span class="text-base text-gray-500">/mois</span>{% endif %}
+          </div>
+          <ul class="mb-6 space-y-2 text-sm">
+            {% for feature in plan.features %}
+              <li class="flex items-start">
+                <svg class="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {{ feature }}
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'register' %}"
+             class="w-full text-center block px-4 py-2 rounded 
+             {% if plan.popular %}
+               bg-cvcraft-blue hover:bg-cvcraft-darkBlue text-white
+             {% else %}
+               border border-gray-300 text-cvcraft-blue hover:bg-gray-100
+             {% endif %}">
+            {{ plan.cta }}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-16 text-center">
+      <h2 class="text-2xl font-semibold mb-4">Questions fréquentes</h2>
+
+      <div class="max-w-3xl mx-auto space-y-6 text-left">
+        <div>
+          <h3 class="font-medium text-lg">Puis-je annuler à tout moment ?</h3>
+          <p class="text-gray-600">Oui, vous pouvez annuler votre abonnement à tout moment sans frais supplémentaires.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-lg">Y a-t-il une période d'essai ?</h3>
+          <p class="text-gray-600">Oui, nous offrons une période d'essai de 7 jours pour nos plans payants.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-lg">Puis-je changer de plan ?</h3>
+          <p class="text-gray-600">Vous pouvez passer à un plan supérieur ou inférieur à tout moment.</p>
+        </div>
+        <div>
+          <h3 class="font-medium text-lg">Comment fonctionne la facturation ?</h3>
+          <p class="text-gray-600">La facturation est mensuelle et commence après votre période d'essai.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'generateurcv/partials.footer.html' %}
+</body>
+</html>

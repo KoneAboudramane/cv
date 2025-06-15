@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Éditer le profil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+     
+    <!-- Modal d'édition de profil -->
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center">
+        <div class="bg-white rounded-lg max-w-[500px] w-full mx-4">
+            <!-- En-tête du modal -->
+            <div class="p-6 border-b">
+                <h2 class="text-xl font-semibold">Modifier votre profil</h2>
+                <p class="text-sm text-gray-500">
+                    Mettez à jour vos informations personnelles
+                </p>
+            </div>
+
+            <!-- Contenu du formulaire -->
+            <div class="p-6">
+                <form class="space-y-6">
+                    <!-- Section photo de profil -->
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="relative">
+                            <!-- Photo de profil -->
+                            <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-200 mb-2">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Boutons de gestion de la photo -->
+                            <div class="flex items-center justify-center mt-2">
+                                <label class="cursor-pointer flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm">
+                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" 
+                                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    Choisir une photo
+                                    <input type="file" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Champ Nom -->
+                    <div class="space-y-2">
+                        <label for="name" class="block text-sm font-medium text-gray-700">
+                            Nom
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Votre nom"
+                        >
+                    </div>
+
+                    <!-- Champ Email (désactivé) -->
+                    <div class="space-y-2">
+                        <label for="email" class="block text-sm font-medium text-gray-700">
+                            Email (non modifiable)
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            disabled 
+                            value="utilisateur@example.com"
+                            class="flex h-10 w-full rounded-md border border-input bg-gray-100 px-3 py-2 text-sm text-gray-500 cursor-not-allowed"
+                        >
+                        <p class="text-sm text-gray-500">
+                            L'adresse email ne peut pas être modifiée.
+                        </p>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="flex justify-end gap-4 mt-6">
+                        <button 
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-white border border-gray-200 text-gray-900 shadow-sm hover:bg-gray-100"
+                        >
+                            Annuler
+                        </button>
+                        <button 
+                            type="submit"
+                            class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700"
+                        >
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

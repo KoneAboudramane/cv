@@ -1,0 +1,265 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Craft Magic</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        .bg-cvcraft-blue { background-color: #2563eb; }
+        .bg-cvcraft-darkBlue { background-color: #1e40af; }
+        .bg-cvcraft-lightGray { background-color: #f3f4f6; }
+        .text-cvcraft-blue { color: #2563eb; }
+    
+        .carousel-img {
+        transition: all 0.8s ease-in-out;
+        opacity: 0;
+        position: absolute;
+        top: 0; left: 0;
+    }
+
+    .carousel-img.active {
+        opacity: 1;
+        z-index: 10;
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes rotateIn { from { transform: rotate(-90deg); opacity: 0; } to { transform: rotate(0); opacity: 1; } }
+
+    /* Animation classes */
+    .fade-in    { animation: fadeIn 0.8s ease-in-out; }
+    .slide-in   { animation: slideIn 0.8s ease-in-out; }
+    .zoom-in    { animation: zoomIn 0.8s ease-in-out; }
+    .rotate-in  { animation: rotateIn 0.8s ease-in-out; }
+    </style>
+      
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Navigation principale -->
+    {% include 'generateurcv/partials.nav.html' %}
+
+    <main class="flex flex-col flex-grow">
+
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-b from-cvcraft-blue to-cvcraft-darkBlue text-white py-20" style="background-color: #2563eb">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <!-- Texte -->
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        {% if hero.titre %}
+                            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">{{ hero.titre }}</h1>
+                        {% endif %}
+                        {% if hero.description %}
+                            <p class="text-xl mb-8">{{ hero.description }}</p>
+                        {% endif %}
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            {% if request.session.utilisateur_id %}
+                                <a href="{% url 'dashboard' %}" class="bg-white text-cvcraft-blue hover:bg-gray-100 px-1 py-3 rounded-lg text-lg text-center">
+                                    Accéder à mon espace
+                                </a>
+                            {% else %}
+                                <a href="{% url 'register' %}" class="bg-white text-cvcraft-blue hover:bg-gray-100 px-1 py-3 rounded-lg text-lg text-center">
+                                    Créer un compte gratuit
+                                </a>
+                                <a href="{% url 'login' %}" class="border border-white text-white hover:bg-white/10 px-1 py-3 rounded-lg text-lg text-center">
+                                    Se connecter
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Carousel Image -->
+                    <div class="md:w-1/2 flex justify-center relative">
+                        <div id="carousel" class="relative w-96 h-96">
+                            {% for img in hero.images.all %}
+                                <div 
+                                    class="carousel-img w-96 h-96 rounded-full shadow-xl bg-center bg-contain bg-no-repeat" 
+                                    style="background-image: url('{{ img.image.url }}');">
+                                </div>
+                            {% empty %}
+                                <img 
+                                    src="https://via.placeholder.com/400x400?text=CV+Preview" 
+                                    alt="CV Preview" 
+                                    class="w-80 h-80 object-cover rounded-full shadow-xl"
+                                />
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+
+        <!-- Features Section -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-cvcraft-blue">
+                    Pourquoi choisir {{ site_config.logo_texte }}?
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {% for feature in features %}
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">{{ feature.title }}</h3>
+                        <p>{{ feature.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+
+<!-- Testimonials Section -->
+<section class="py-16 bg-cvcraft-lightGray">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12 text-cvcraft-blue">
+      Ce que disent nos utilisateurs
+    </h2>
+
+    <!-- Liste des témoignages dynamiques -->
+    <div id="temoignages-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% for temoignage in temoignages %}
+      <div class="break-words p-4 border rounded bg-white shadow-sm temoignage-item {% if forloop.counter > 6 %}hidden{% endif %}">
+        <p class="mt-2 font-bold flex items-center gap-2  text-xl">
+          {% if temoignage.utilisateur.photo %}
+          <img src="{{ temoignage.utilisateur.photo.url }}" alt="Photo de {{ temoignage.utilisateur.nom_complet }}"
+            class="w-16 h-16 rounded-full object-cover" />
+          {% endif %}
+          {{ temoignage.utilisateur.nom_complet }}
+        </p><br>
+        <blockquote class="italic max-w-full break-words">"{{ temoignage.contenu }}"</blockquote>
+      </div>
+      {% empty %}
+      <p>Aucun témoignage pour le moment.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Bouton Voir plus / Voir moins -->
+    {% if temoignages|length > 6 %}
+    <div class="text-center mt-6">
+      <button id="toggle-btn" class="px-4 py-2 bg-cvcraft-blue text-white rounded hover:bg-cvcraft-blue-dark transition">
+        Voir plus
+      </button>
+    </div>
+    {% endif %}
+  </div>
+
+  <br><br>
+
+  <!-- Formulaire visible seulement si utilisateur connecté -->
+{% if request.session.utilisateur_id %}
+
+  <form method="post" class="max-w-xl mx-auto mb-12 flex gap-4 items-center">
+    {% csrf_token %}
+    <input type="text" name="contenu" placeholder="Votre témoignage ici..." required
+      class="flex-grow p-2 border rounded" />
+    <button type="submit" class="px-4 py-2 bg-cvcraft-blue text-white rounded hover:bg-cvcraft-blue-dark transition">
+      Envoyer
+    </button>
+  </form>
+  {% else %}
+  <div class="text-center text-gray-600 italic mt-6">
+    Connectez-vous pour laisser un témoignage.
+  </div>
+  {% endif %}
+</section>
+
+
+
+
+
+
+        <!-- CTA Section -->
+        <section class="py-16 bg-cvcraft-blue text-white text-center">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-6">Prêt à booster votre carrière?</h2>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">
+                  Rejoignez des milliers de professionnels qui ont transformé leur recherche d'emploi avec nos outils.
+                </p>
+              
+                {% if request.session.utilisateur_id %}
+                  <a href="{% url 'templates' %}" class="bg-white text-cvcraft-blue hover:bg-gray-100 px-1 py-3 rounded-lg text-lg inline-block">
+                    Créer ton modèle maintenant
+                  </a>
+                {% else %}
+                  <a href="{% url 'register' %}" class="bg-white text-cvcraft-blue hover:bg-gray-100 px-1 py-3 rounded-lg text-lg inline-block">
+                    Commencer gratuitement
+                  </a>
+                {% endif %}
+              </div>
+              
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    {% include 'generateurcv/partials.footer.html' %}
+
+
+    <!-- JS du Carousel -->
+    <script>
+        
+
+        const toggleBtn = document.getElementById('toggle-btn');
+        const temoignages = document.querySelectorAll('.temoignage-item');
+        let expanded = false;
+
+        toggleBtn?.addEventListener('click', () => {
+            expanded = !expanded;
+            if (expanded) {
+            // Montrer tous les témoignages
+            temoignages.forEach(item => item.classList.remove('hidden'));
+            toggleBtn.textContent = 'Voir moins';
+            } else {
+            // Cacher ceux après le 6e
+            temoignages.forEach((item, index) => {
+                if (index >= 6) {
+                item.classList.add('hidden');
+                }
+            });
+            toggleBtn.textContent = 'Voir plus';
+            // Scroll en haut des témoignages
+            document.getElementById('temoignages-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const images = document.querySelectorAll('.carousel-img');
+            if (!images.length) return;
+
+            const animations = ['fade-in', 'slide-in', 'zoom-in', 'rotate-in'];
+            let current = 0;
+
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.classList.remove('active', ...animations);
+                    img.style.zIndex = 0;
+                    if (i === index) {
+                        const anim = animations[Math.floor(Math.random() * animations.length)];
+                        img.classList.add('active', anim);
+                        img.style.zIndex = 10;
+                    }
+                });
+            }
+
+            showImage(current);
+
+            setInterval(() => {
+                current = (current + 1) % images.length;
+                showImage(current);
+            }, 4000);
+        });
+    </script>
+
+</body>
+
+</html>

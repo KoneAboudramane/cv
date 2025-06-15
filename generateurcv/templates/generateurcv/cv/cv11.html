@@ -1,0 +1,1524 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Éditeur de CV Professionnel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<style>
+@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .table-wrapper {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+}
+</style>
+
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+            <button onclick="goBackAndReload()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>Retour
+            </button>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Éditeur de CV Professionnel</h1>
+            <div class="flex space-x-2">
+                <button id="save-button" onclick="saveCV()" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 flex items-center">
+                    <i class="ri-save-line mr-2"></i>Sauvegarder
+                </button>
+                <button onclick="exportCV()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                    <i class="ri-download-line mr-2"></i>Exporter PDF
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="pt-20 container mx-auto px-4 py-8">
+        <!-- Onglets -->
+        <div class="sticky top-16 z-40 bg-white rounded-lg shadow-sm mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="flex -mb-px overflow-x-auto">
+                    <button onclick="switchTab('personal')" class="tab-trigger px-4 py-3 text-sm font-medium border-b-2 border-blue-600 text-blue-600 whitespace-nowrap" data-tab="personal">
+                        <i class="ri-user-line mr-2"></i>Personnel
+                    </button>
+                    <button onclick="switchTab('education')" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" data-tab="education">
+                        <i class="ri-graduation-cap-line mr-2"></i>Formation
+                    </button>
+                    <button onclick="switchTab('experience')" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" data-tab="experience">
+                        <i class="ri-briefcase-line mr-2"></i>Expérience
+                    </button>
+                    <button onclick="switchTab('skills')" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" data-tab="skills">
+                        <i class="ri-star-line mr-2"></i>Compétences
+                    </button>
+                    <button onclick="switchTab('languages')" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" data-tab="languages">
+                        <i class="ri-global-line mr-2"></i>Langues
+                    </button>
+                    <button onclick="switchTab('interests')" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" data-tab="interests">
+                        <i class="ri-heart-line mr-2"></i>Loisirs
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Formulaire -->
+            <div class="lg:col-span-2">
+                <!-- Section Personnel -->
+                <div id="personal" class="tab-content active">
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                        <h2 class="text-xl font-semibold mb-4">Informations personnelles</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-center mb-6">
+                                <div class="relative">
+                                    <div id="photo-preview" class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                        <i class="ri-user-line text-4xl text-gray-400"></i>
+                                    </div>
+                                    <input type="file" id="photo-input" class="hidden" accept="image/*">
+                                    <button onclick="document.getElementById('photo-input').click()" class="mt-2 text-sm text-blue-600 hover:text-blue-700 flex items-center justify-center mx-auto">
+                                        <i class="ri-camera-line mr-1"></i> Ajouter une photo
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Nom complet <span class="text-red-500">*</span></label>
+                                    <input type="text" id="fullName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Titre professionnel <span class="text-red-500">*</span></label>
+                                    <input type="text" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
+                                    <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Téléphone</label>
+                                    <input type="tel" id="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Adresse</label>
+                                    <input type="text" id="address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ex. : Abidjan, Côte d'Ivoire">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Site Web</label>
+                                    <input type="url" id="website" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="https://exemple.com">
+                                </div>
+                            </div>
+
+                            <!-- 🆕 Nationalité -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Nationalité</label>
+                                <input type="text" id="nationality" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ex. : Ivoirienne, Française...">
+                            </div>
+
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Résumé professionnel</label>
+                                <textarea id="summary" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Décrivez brièvement votre parcours et vos compétences"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Formation -->
+                <div id="education" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Formation académique</h2>
+                            <button onclick="addEducation()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i class="ri-add-line mr-2"></i>Ajouter une formation
+                            </button>
+                        </div>
+                        <div id="education-list" class="space-y-4">
+                            <!-- Les formations seront ajoutées ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Expérience -->
+                <div id="experience" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Expérience professionnelle</h2>
+                            <button onclick="addExperience()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i class="ri-add-line mr-2"></i>Ajouter une expérience
+                            </button>
+                        </div>
+                        <div id="experience-list" class="space-y-4">
+                            <!-- Les expériences seront ajoutées ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Compétences -->
+                <div id="skills" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Compétences techniques</h2>
+                            <button onclick="addSkill()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i class="ri-add-line mr-2"></i>Ajouter une compétence
+                            </button>
+                        </div>
+                        <div id="skills-list" class="space-y-4">
+                            <!-- Les compétences seront ajoutées ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Langues -->
+                <div id="languages" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Langues</h2>
+                            <button onclick="addLanguage()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i class="ri-add-line mr-2"></i>Ajouter une langue
+                            </button>
+                        </div>
+                        <div id="languages-list" class="space-y-4">
+                            <!-- Les langues seront ajoutées ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Loisirs -->
+                <div id="interests" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Centres d'intérêt</h2>
+                            <button onclick="addInterest()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                                <i class="ri-add-line mr-2"></i>Ajouter un centre d'intérêt
+                            </button>
+                        </div>
+                        <div id="interests-list" class="space-y-4">
+                            <!-- Les loisirs seront ajoutés ici dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aperçu -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-lg shadow-sm sticky top-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Aperçu du CV</h2>
+                        <button onclick="togglePreviewMode()" class="text-blue-600 hover:text-blue-700" title="Basculer en mode plein écran">
+                            <i class="ri-fullscreen-line"></i>
+                        </button>
+                    </div>
+                    <div id="cv-preview" class="bg-gray-100 p-4 rounded min-h-[600px] text-sm">
+                        <!-- L'aperçu du CV sera mis à jour ici dynamiquement -->
+                    </div>
+                    <div class="mt-4 text-xs text-gray-500">
+                        <p><span class="text-red-500">*</span> Champs obligatoires</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal pour le plein écran -->
+    <div id="fullscreen-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-auto">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-semibold">Aperçu complet du CV</h3>
+                <button onclick="togglePreviewMode()" class="text-gray-500 hover:text-gray-700">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            <div id="fullscreen-preview" class="p-8 bg-white"></div>
+            <div class="p-4 border-t flex justify-end">
+                <button onclick="exportCV(true)" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+                    <i class="ri-download-line mr-2"></i>Exporter ce CV
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    <style>
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #cv-preview {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .skill-level {
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .skill-level-bar {
+            height: 100%;
+            background-color: #3b82f6;
+        }
+    </style>
+
+    <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('cv_id')) {
+        const cvId = params.get('cv_id');
+        chargerCV(cvId);
+    }
+});
+
+function chargerCV(id) {
+    fetch(`/api/cv/${id}/`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) throw new Error("Erreur de chargement");
+
+const cv = data.cv;
+
+// 1️⃣ Mise à jour des champs du formulaire
+document.getElementById('fullName').value = cv.full_name;
+document.getElementById('title').value = cv.title;
+document.getElementById('email').value = cv.email;
+document.getElementById('phone').value = cv.phone;
+document.getElementById('summary').value = cv.summary;
+document.getElementById('address').value = cv.address || '';       // ✅
+document.getElementById('website').value = cv.website || '';       // ✅
+document.getElementById('nationality').value = cv.nationality || '';// ✅
+
+// 2️⃣ Mise à jour du cvData
+cvData.personalInfo.fullName = cv.full_name;
+cvData.personalInfo.title = cv.title;
+cvData.personalInfo.email = cv.email;
+cvData.personalInfo.phone = cv.phone;
+cvData.personalInfo.summary = cv.summary;
+cvData.personalInfo.address = cv.address || '';        // ✅
+cvData.personalInfo.website = cv.website || '';        // ✅
+cvData.personalInfo.nationality = cv.nationality || '';// ✅
+
+// 3️⃣ Photo de profil
+if (cv.photo) {
+    const photoUrl = cv.photo;
+
+    cvData.personalInfo.photo = photoUrl;
+
+    document.getElementById('photo-preview').innerHTML = `
+        <img src="${photoUrl}" alt="Photo de profil" class="w-full h-full object-cover" />
+    `;
+}
+
+
+            // 4️⃣ Injection des listes dynamiques
+            chargerListe(cv.experiences, 'experience-list', createExperienceHTML, 'experience');
+            chargerListe(cv.education, 'education-list', createEducationHTML, 'education');
+            chargerListe(cv.skills, 'skills-list', createSkillHTML, 'skills');
+            chargerListe(cv.languages, 'languages-list', createLanguageHTML, 'languages');
+            chargerListe(cv.interests, 'interests-list', createInterestHTML, 'interests');
+
+            // 5️⃣ Mettre à jour l'aperçu
+            updatePreview();
+        })
+        .catch(err => {
+            console.error('Erreur CV :', err);
+            alert("Impossible de charger le CV.");
+        });
+
+        // 🔄 Remplacer "Sauvegarder" par "Mettre à jour" après chargement
+setTimeout(() => {
+    const saveBtn = document.getElementById('save-button');
+    if (saveBtn) {
+        const updateBtn = document.createElement('button');
+        updateBtn.innerHTML = `<i class="ri-upload-line mr-2"></i>Mettre à jour`;
+        updateBtn.onclick = updateCV;
+        updateBtn.className = "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center";
+        updateBtn.id = 'update-button';
+        saveBtn.parentNode.replaceChild(updateBtn, saveBtn);
+    } else {
+        console.warn("❌ Bouton 'save-button' non trouvé");
+    }
+}, 100); // délai DOM (optionnel)
+
+}
+
+// 🚀 Mise à jour : chargerListe ajoute aussi dans cvData
+function chargerListe(data, containerId, renderFn, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+
+    // Reset la liste correspondante dans cvData
+    cvData[type] = [];
+
+    data.forEach(item => {
+        const id = `${type}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        const div = document.createElement('div');
+        div.className = 'bg-gray-50 p-4 rounded shadow-sm space-y-2';
+        div.id = id;
+        div.innerHTML = renderFn(item);
+        container.appendChild(div);
+
+        // Ajout dans cvData
+        const newItem = { ...item, id };
+        cvData[type].push(newItem);
+    });
+}
+
+
+// === Templates ===
+
+function createExperienceHTML(exp) {
+    return `
+        <input type="text" value="${exp.position}" class="block w-full" placeholder="Poste">
+        <input type="text" value="${exp.company}" class="block w-full" placeholder="Entreprise">
+        <input type="text" value="${exp.date}" class="block w-full" placeholder="Date">
+        <textarea class="block w-full" placeholder="Description">${exp.description}</textarea>
+    `;
+}
+
+function createEducationHTML(edu) {
+    return `
+        <input type="text" value="${edu.degree}" class="block w-full" placeholder="Diplôme">
+        <input type="text" value="${edu.institution}" class="block w-full" placeholder="Établissement">
+        <input type="text" value="${edu.date}" class="block w-full" placeholder="Date">
+        <textarea class="block w-full" placeholder="Description">${edu.description}</textarea>
+    `;
+}
+
+function createSkillHTML(skill) {
+    return `
+        <input type="text" value="${skill.name}" class="block w-full" placeholder="Compétence">
+        <input type="number" value="${skill.level}" min="1" max="5" class="block w-full" placeholder="Niveau">
+    `;
+}
+
+function createLanguageHTML(lang) {
+    return `
+        <input type="text" value="${lang.name}" class="block w-full" placeholder="Langue">
+        <input type="text" value="${lang.level}" class="block w-full" placeholder="Niveau">
+    `;
+}
+
+function createInterestHTML(interest) {
+    return `<input type="text" value="${interest.name}" class="block w-full" placeholder="Loisir">`;
+}
+
+
+
+function updateCV() {
+    const cvId = new URLSearchParams(window.location.search).get('cv_id');
+    if (!cvId) {
+        alert("Impossible de mettre à jour : ID du CV manquant.");
+        return;
+    }
+
+// Mettre à jour les données personnelles depuis les champs
+cvData.personalInfo = {
+    fullName: document.getElementById('fullName').value,
+    title: document.getElementById('title').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    summary: document.getElementById('summary').value,
+    address: document.getElementById('address').value,        // ✅
+    website: document.getElementById('website').value,        // ✅
+    nationality: document.getElementById('nationality').value,// ✅
+    photo: cvData.personalInfo.photo // conserve l'existante
+};
+
+    // Validation des champs obligatoires
+    if (!cvData.personalInfo.fullName || !cvData.personalInfo.title || !cvData.personalInfo.email) {
+        alert('Veuillez remplir les champs obligatoires (Nom, Titre et Email)');
+        return;
+    }
+
+    const previewElement = document.getElementById('cv-preview');
+
+    html2canvas(previewElement).then(canvas => {
+        const previewImage = canvas.toDataURL();
+        const formData = new FormData();
+
+        formData.append('cv_data', JSON.stringify(cvData));
+        formData.append('preview_image', previewImage); // 📸
+        formData.append('page_url', window.location.href);
+
+        const photoInput = document.getElementById('photo-input');
+        if (photoInput.files[0]) {
+            formData.append('photo', photoInput.files[0]);
+        }
+
+        // Utiliser POST + _method spoof pour que Django accepte FormData
+        formData.append('_method', 'PUT');
+
+        fetch(`/update_cv/${cvId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau lors de la mise à jour');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('✅ CV mis à jour avec succès !');
+                updatePreview(); // recharge l'aperçu
+            } else {
+                throw new Error(data.message || 'Erreur lors de la mise à jour');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Erreur updateCV:', error);
+            alert('Erreur lors de la mise à jour : ' + error.message);
+        });
+    });
+}
+
+
+
+        // État global du CV
+        let cvData = {
+            personalInfo: {
+                fullName: '',
+                title: '',
+                email: '',
+                phone: '',
+                summary: '',
+                photo: null
+            },
+            education: [],
+            experience: [],
+            skills: [],
+            languages: [],
+            interests: []
+        };
+
+        // Fonction pour réinitialiser complètement le formulaire
+        function resetForm() {
+            // Réinitialiser les champs personnels
+            document.getElementById('fullName').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('summary').value = '';
+            document.getElementById('photo-preview').innerHTML = '<i class="ri-user-line text-4xl text-gray-400"></i>';
+            document.getElementById('photo-input').value = '';
+            
+            // Réinitialiser les listes dynamiques
+            document.getElementById('education-list').innerHTML = '';
+            document.getElementById('experience-list').innerHTML = '';
+            document.getElementById('skills-list').innerHTML = '';
+            document.getElementById('languages-list').innerHTML = '';
+            document.getElementById('interests-list').innerHTML = '';
+            
+            // Réinitialiser l'objet cvData
+            cvData = {
+                personalInfo: {
+                    fullName: '',
+                    title: '',
+                    email: '',
+                    phone: '',
+                    summary: '',
+                    photo: null
+                },
+                education: [],
+                experience: [],
+                skills: [],
+                languages: [],
+                interests: []
+            };
+            
+            updatePreview();
+        }
+
+        // Gestion des onglets
+        function switchTab(tabId) {
+            // Masquer tous les contenus
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+
+            // Réinitialiser tous les boutons d'onglet
+            document.querySelectorAll('.tab-trigger').forEach(btn => {
+                btn.classList.remove('border-blue-600', 'text-blue-600');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Afficher le contenu sélectionné
+            const selectedContent = document.getElementById(tabId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('active');
+
+            // Activer le bouton sélectionné
+            const selectedTab = document.querySelector(`[data-tab="${tabId}"]`);
+            selectedTab.classList.remove('border-transparent', 'text-gray-500');
+            selectedTab.classList.add('border-blue-600', 'text-blue-600');
+        }
+
+        // Basculer entre mode normal et plein écran
+        function togglePreviewMode() {
+            const modal = document.getElementById('fullscreen-modal');
+            const isHidden = modal.classList.contains('hidden');
+            
+            if (isHidden) {
+                // Copier le contenu de l'aperçu dans le modal
+                const previewContent = document.getElementById('cv-preview').innerHTML;
+                document.getElementById('fullscreen-preview').innerHTML = previewContent;
+                
+                // Afficher le modal
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Cacher le modal
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Gestion de la photo
+        document.getElementById('photo-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Vérifier la taille du fichier (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('La taille de l\'image ne doit pas dépasser 2MB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoPreview = document.getElementById('photo-preview');
+                    photoPreview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                    cvData.personalInfo.photo = e.target.result;
+                    updatePreview();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Ajout d'une formation
+        function addEducation(education = null) {
+            const id = 'edu-' + Date.now();
+            const newEducation = education || {
+                id,
+                institution: '',
+                degree: '',
+                startDate: '',
+                endDate: '',
+                description: '',
+                isCurrent: false
+            };
+
+            if (!education) {
+                cvData.education.push(newEducation);
+            }
+
+            const educationHTML = `
+                <div id="${id}" class="p-4 border rounded-md bg-gray-50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Institution</label>
+                            <input type="text" placeholder="Université, École..." class="p-2 border rounded w-full" 
+                                   value="${newEducation.institution}"
+                                   onchange="updateEducation('${id}', 'institution', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Diplôme</label>
+                            <input type="text" placeholder="Diplôme obtenu" class="p-2 border rounded w-full"
+                                   value="${newEducation.degree}"
+                                   onchange="updateEducation('${id}', 'degree', this.value)">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date de début</label>
+                            <input type="month" class="p-2 border rounded w-full"
+                                   value="${newEducation.startDate}"
+                                   onchange="updateEducation('${id}', 'startDate', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+                            <div class="flex items-center">
+                                <input type="month" class="p-2 border rounded w-full ${newEducation.isCurrent ? 'bg-gray-100' : ''}" 
+                                       value="${newEducation.isCurrent ? '' : newEducation.endDate}"
+                                       ${newEducation.isCurrent ? 'disabled' : ''}
+                                       onchange="updateEducation('${id}', 'endDate', this.value)">
+                                <label class="ml-2 flex items-center">
+                                    <input type="checkbox" class="mr-1" ${newEducation.isCurrent ? 'checked' : ''}
+                                           onchange="toggleCurrentEducation('${id}', this.checked)">
+                                    En cours
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea placeholder="Détails sur votre formation" class="p-2 border rounded w-full mb-4"
+                                onchange="updateEducation('${id}', 'description', this.value)">${newEducation.description}</textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="removeEducation('${id}')" class="text-red-600 hover:text-red-700 flex items-center">
+                            <i class="ri-delete-bin-line mr-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('education-list').insertAdjacentHTML('beforeend', educationHTML);
+            updatePreview();
+        }
+
+        function toggleCurrentEducation(id, isCurrent) {
+            const education = cvData.education.find(edu => edu.id === id);
+            if (education) {
+                education.isCurrent = isCurrent;
+                const endDateInput = document.getElementById(id).querySelector('input[type="month"]:disabled');
+                if (endDateInput) {
+                    endDateInput.disabled = isCurrent;
+                    endDateInput.classList.toggle('bg-gray-100', isCurrent);
+                    if (isCurrent) {
+                        endDateInput.value = '';
+                        education.endDate = '';
+                    }
+                }
+                updatePreview();
+            }
+        }
+
+        function updateEducation(id, field, value) {
+            const education = cvData.education.find(edu => edu.id === id);
+            if (education) {
+                education[field] = value;
+                updatePreview();
+            }
+        }
+
+        function removeEducation(id) {
+            if (confirm('Voulez-vous vraiment supprimer cette formation ?')) {
+                cvData.education = cvData.education.filter(edu => edu.id !== id);
+                document.getElementById(id).remove();
+                updatePreview();
+            }
+        }
+
+        // Ajout d'une expérience
+        function addExperience(experience = null) {
+            const id = 'exp-' + Date.now();
+            const newExperience = experience || {
+                id,
+                company: '',
+                position: '',
+                startDate: '',
+                endDate: '',
+                description: '',
+                isCurrent: false
+            };
+
+            if (!experience) {
+                cvData.experience.push(newExperience);
+            }
+
+            const experienceHTML = `
+                <div id="${id}" class="p-4 border rounded-md bg-gray-50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Entreprise</label>
+                            <input type="text" placeholder="Nom de l'entreprise" class="p-2 border rounded w-full"
+                                   value="${newExperience.company}"
+                                   onchange="updateExperience('${id}', 'company', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Poste</label>
+                            <input type="text" placeholder="Votre poste" class="p-2 border rounded w-full"
+                                   value="${newExperience.position}"
+                                   onchange="updateExperience('${id}', 'position', this.value)">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date de début</label>
+                            <input type="month" class="p-2 border rounded w-full"
+                                   value="${newExperience.startDate}"
+                                   onchange="updateExperience('${id}', 'startDate', this.value)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+                            <div class="flex items-center">
+                                <input type="month" class="p-2 border rounded w-full ${newExperience.isCurrent ? 'bg-gray-100' : ''}" 
+                                       value="${newExperience.isCurrent ? '' : newExperience.endDate}"
+                                       ${newExperience.isCurrent ? 'disabled' : ''}
+                                       onchange="updateExperience('${id}', 'endDate', this.value)">
+                                <label class="ml-2 flex items-center">
+                                    <input type="checkbox" class="mr-1" ${newExperience.isCurrent ? 'checked' : ''}
+                                           onchange="toggleCurrentExperience('${id}', this.checked)">
+                                    Poste actuel
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea placeholder="Détails sur vos responsabilités et réalisations" class="p-2 border rounded w-full mb-4"
+                                onchange="updateExperience('${id}', 'description', this.value)">${newExperience.description}</textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="removeExperience('${id}')" class="text-red-600 hover:text-red-700 flex items-center">
+                            <i class="ri-delete-bin-line mr-1"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('experience-list').insertAdjacentHTML('beforeend', experienceHTML);
+            updatePreview();
+        }
+
+        function toggleCurrentExperience(id, isCurrent) {
+            const experience = cvData.experience.find(exp => exp.id === id);
+            if (experience) {
+                experience.isCurrent = isCurrent;
+                const endDateInput = document.getElementById(id).querySelector('input[type="month"]:disabled');
+                if (endDateInput) {
+                    endDateInput.disabled = isCurrent;
+                    endDateInput.classList.toggle('bg-gray-100', isCurrent);
+                    if (isCurrent) {
+                        endDateInput.value = '';
+                        experience.endDate = '';
+                    }
+                }
+                updatePreview();
+            }
+        }
+
+        function updateExperience(id, field, value) {
+            const experience = cvData.experience.find(exp => exp.id === id);
+            if (experience) {
+                experience[field] = value;
+                updatePreview();
+            }
+        }
+
+        function removeExperience(id) {
+            if (confirm('Voulez-vous vraiment supprimer cette expérience ?')) {
+                cvData.experience = cvData.experience.filter(exp => exp.id !== id);
+                document.getElementById(id).remove();
+                updatePreview();
+            }
+        }
+
+        // Ajout d'une compétence
+        function addSkill(skill = null) {
+            const id = 'skill-' + Date.now();
+            const newSkill = skill || {
+                id,
+                name: '',
+                level: 3
+            };
+
+            if (!skill) {
+                cvData.skills.push(newSkill);
+            }
+
+            const skillHTML = `
+                <div id="${id}" class="p-4 border rounded-md bg-gray-50 flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-medium text-gray-700">Compétence</label>
+                        <input type="text" placeholder="Nom de la compétence" class="p-2 border rounded w-full"
+                               value="${newSkill.name}"
+                               onchange="updateSkill('${id}', 'name', this.value)">
+                    </div>
+                    <div class="w-full md:w-40">
+                        <label class="block text-sm font-medium text-gray-700">Niveau</label>
+                        <select class="p-2 border rounded w-full" onchange="updateSkill('${id}', 'level', this.value)">
+                            <option value="1" ${newSkill.level == 1 ? 'selected' : ''}>Débutant</option>
+                            <option value="2" ${newSkill.level == 2 ? 'selected' : ''}>Intermédiaire</option>
+                            <option value="3" ${newSkill.level == 3 ? 'selected' : ''}>Avancé</option>
+                            <option value="4" ${newSkill.level == 4 ? 'selected' : ''}>Expert</option>
+                            <option value="5" ${newSkill.level == 5 ? 'selected' : ''}>Maîtrise</option>
+                        </select>
+                    </div>
+                    <button onclick="removeSkill('${id}')" class="text-red-600 hover:text-red-700 self-end md:self-center mt-2 md:mt-0">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('skills-list').insertAdjacentHTML('beforeend', skillHTML);
+            updatePreview();
+        }
+
+        function updateSkill(id, field, value) {
+            const skill = cvData.skills.find(s => s.id === id);
+            if (skill) {
+                skill[field] = field === 'level' ? parseInt(value) : value;
+                updatePreview();
+            }
+        }
+
+        function removeSkill(id) {
+            if (confirm('Voulez-vous vraiment supprimer cette compétence ?')) {
+                cvData.skills = cvData.skills.filter(s => s.id !== id);
+                document.getElementById(id).remove();
+                updatePreview();
+            }
+        }
+
+        // Ajout d'une langue
+        function addLanguage(language = null) {
+            const id = 'lang-' + Date.now();
+            const newLanguage = language || {
+                id,
+                name: '',
+                level: 'Intermédiaire'
+            };
+
+            if (!language) {
+                cvData.languages.push(newLanguage);
+            }
+
+            const languageHTML = `
+                <div id="${id}" class="p-4 border rounded-md bg-gray-50 flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-medium text-gray-700">Langue</label>
+                        <input type="text" placeholder="Nom de la langue" class="p-2 border rounded w-full"
+                               value="${newLanguage.name}"
+                               onchange="updateLanguage('${id}', 'name', this.value)">
+                    </div>
+                    <div class="w-full md:w-48">
+                        <label class="block text-sm font-medium text-gray-700">Niveau</label>
+                        <select class="p-2 border rounded w-full" onchange="updateLanguage('${id}', 'level', this.value)">
+                            <option value="Débutant" ${newLanguage.level === 'Débutant' ? 'selected' : ''}>Débutant</option>
+                            <option value="Intermédiaire" ${newLanguage.level === 'Intermédiaire' ? 'selected' : ''}>Intermédiaire</option>
+                            <option value="Avancé" ${newLanguage.level === 'Avancé' ? 'selected' : ''}>Avancé</option>
+                            <option value="Courant" ${newLanguage.level === 'Courant' ? 'selected' : ''}>Courant</option>
+                            <option value="Bilingue" ${newLanguage.level === 'Bilingue' ? 'selected' : ''}>Bilingue</option>
+                            <option value="Langue maternelle" ${newLanguage.level === 'Langue maternelle' ? 'selected' : ''}>Langue maternelle</option>
+                        </select>
+                    </div>
+                    <button onclick="removeLanguage('${id}')" class="text-red-600 hover:text-red-700 self-end md:self-center mt-2 md:mt-0">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('languages-list').insertAdjacentHTML('beforeend', languageHTML);
+            updatePreview();
+        }
+
+        function updateLanguage(id, field, value) {
+            const language = cvData.languages.find(l => l.id === id);
+            if (language) {
+                language[field] = value;
+                updatePreview();
+            }
+        }
+
+        function removeLanguage(id) {
+            if (confirm('Voulez-vous vraiment supprimer cette langue ?')) {
+                cvData.languages = cvData.languages.filter(l => l.id !== id);
+                document.getElementById(id).remove();
+                updatePreview();
+            }
+        }
+
+        // Ajout d'un loisir
+        function addInterest(interest = null) {
+            const id = 'int-' + Date.now();
+            const newInterest = interest || {
+                id,
+                name: ''
+            };
+
+            if (!interest) {
+                cvData.interests.push(newInterest);
+            }
+
+            const interestHTML = `
+                <div id="${id}" class="p-4 border rounded-md bg-gray-50 flex items-center gap-4">
+                    <input type="text" placeholder="Centre d'intérêt" class="p-2 border rounded flex-grow"
+                           value="${newInterest.name}"
+                           onchange="updateInterest('${id}', this.value)">
+                    <button onclick="removeInterest('${id}')" class="text-red-600 hover:text-red-700">
+                        <i class="ri-delete-bin-line text-lg"></i>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('interests-list').insertAdjacentHTML('beforeend', interestHTML);
+            updatePreview();
+        }
+
+        function updateInterest(id, value) {
+            const interest = cvData.interests.find(i => i.id === id);
+            if (interest) {
+                interest.name = value;
+                updatePreview();
+            }
+        }
+
+        function removeInterest(id) {
+            if (confirm('Voulez-vous vraiment supprimer ce centre d\'intérêt ?')) {
+                cvData.interests = cvData.interests.filter(i => i.id !== id);
+                document.getElementById(id).remove();
+                updatePreview();
+            }
+        }
+
+        // Mise à jour des informations personnelles
+        ['fullName', 'title', 'email', 'phone', 'summary','address','website','nationality'].forEach(field => {
+            document.getElementById(field)?.addEventListener('input', function(e) {
+                cvData.personalInfo[field] = e.target.value;
+                updatePreview();
+            });
+        });
+
+        // Formatage des dates pour l'affichage
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' });
+        }
+
+
+
+
+function updatePreview() {
+  const preview = document.getElementById('cv-preview');
+  const fullscreenPreview = document.getElementById('fullscreen-preview');
+
+  const formatDateRange = (start, end, current) => {
+    if (!start && !end) return '';
+    const s = start ? formatDate(start + '-01') : '';
+    const e = current ? 'Présent' : (end ? formatDate(end + '-01') : '');
+    return s && e ? `${s} - ${e}` : (s || e);
+  };
+
+  const getLangPct = lvl => ({
+    'Débutant': 25,
+    'Intermédiaire': 50,
+    'Avancé': 70,
+    'Courant': 85,
+    'Bilingue': 95,
+    'Langue maternelle': 100
+  }[lvl] || 0);
+
+  const font = document.getElementById('font-select')?.value || 'Helvetica';
+  const size = document.getElementById('font-size')?.value || 14;
+  const lh = document.getElementById('line-height')?.value || 1.5;
+  const theme = document.getElementById('theme-color')?.value || '#1f2937';
+  const bgL = document.getElementById('header-bg-color')?.value || '#f3f4f6';
+  const bgR = document.getElementById('right-bg-color')?.value || '#ffffff';
+
+  const isDark = hex => {
+    const v = parseInt(hex.slice(1), 16);
+    const r = (v >> 16) & 255;
+    const g = (v >> 8) & 255;
+    const b = v & 255;
+    return (0.299 * r + 0.587 * g + 0.114 * b) < 128;
+  };
+  
+  const textL = isDark(bgL) ? '#ffffff' : '#111827';
+  const textR = isDark(bgR) ? '#ffffff' : '#111827';
+
+const previewHTML = `
+<div style="display:table; width:100%; table-layout:fixed; font-family:${font}, sans-serif; font-size:${size}px; line-height:${lh}; max-width:850px; margin:auto; background:#ffffff; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-radius:12px; overflow:hidden;">
+
+  <!-- LEFT COLUMN -->
+  <div style="display:table-cell; width:35%; background:linear-gradient(135deg, ${bgL}, ${theme}33); color:${textL}; padding:32px; vertical-align:top; box-sizing:border-box;">
+    ${cvData.personalInfo.photo ? `
+      <div style="width:120px;height:120px;border:6px solid ${theme};border-radius:30% 70% 50% 50% / 60% 40% 60% 40%; overflow:hidden; margin-bottom:20px; box-shadow: 0 6px 12px -4px ${theme}; margin-left:auto; margin-right:auto;">
+        <img src="${cvData.personalInfo.photo}" style="width:100%;height:100%;object-fit:cover;" />
+      </div>` : ''}
+
+    ${(cvData.personalInfo.phone || cvData.personalInfo.email || cvData.personalInfo.website || cvData.personalInfo.address) ? `
+      <h3 style="color:${theme}; margin-bottom:6px; font-size:1.3em; font-weight:bold">Contact</h3>
+      <div style="margin-bottom:24px;">
+        ${cvData.personalInfo.phone ? `<p style="margin:4px 0;"><strong>📞</strong> ${cvData.personalInfo.phone}</p>` : ''}
+        ${cvData.personalInfo.email ? `<p style="margin:4px 0;"><strong>✉️</strong> ${cvData.personalInfo.email}</p>` : ''}
+        ${cvData.personalInfo.website ? `<p style="margin:4px 0;"><strong>🔗</strong> ${cvData.personalInfo.website}</p>` : ''}
+        ${cvData.personalInfo.address ? `<p style="margin:4px 0;"><strong>📍</strong> ${cvData.personalInfo.address}</p>` : ''}
+        ${cvData.personalInfo.nationality ? `<p style="margin:4px 0;"><strong>🌍</strong> ${cvData.personalInfo.nationality}</p>` : ''}
+
+      </div>` : ''}
+
+    ${cvData.interests.length ? `
+      <h4 style="margin-top:24px; color:${theme}; font-size:1.2em; font-weight:bold">Loisirs</h4>
+      <div style="display:flex; flex-wrap:wrap; gap:8px">
+        ${cvData.interests.map(i => `
+          <span style="padding:4px 12px; background:${theme}100; color:${textL}; border-radius:24px; font-size:0.9em">${i.name}</span>
+        `).join('')}
+      </div>` : ''}
+
+    ${cvData.languages.length ? `
+      <h3 style="margin-top:24px; color:${theme}; font-size:1.2em; font-weight:bold">Langues</h3>
+      <div style="display:flex; flex-wrap:wrap; gap:8px">
+        ${cvData.languages.map(l => `
+          <span style="padding:4px 12px; background:${theme}100; color:${textL}; border-radius:24px; font-size:0.9em">${l.name}  ${l.level}</span>
+        `).join('')}
+      </div>` : ''}
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div style="display:table-cell; width:65%; background:${bgR}; color:${textR}; padding:32px; vertical-align:top; box-sizing:border-box; position:relative;">
+    <div style="width:100%;height:100px;background: linear-gradient(135deg, ${bgL}, ${theme}33);transform:skewY(-10deg);position:absolute;top:0;right:0;z-index:0;"></div>
+
+    <h1 style="color:${theme}; margin-bottom:6px; font-size:1.7em; font-weight:bold; position:relative">${cvData.personalInfo.fullName || 'Votre nom'}</h1>
+    <h2 style="color:${theme}AA; margin-bottom:24px; font-size:1.2em; position:relative">${cvData.personalInfo.title || 'Votre titre'}</h2>
+
+    ${cvData.personalInfo.summary ? `
+      <div style="margin-bottom:24px; background:${theme}11; padding:16px; border-radius:8px; position:relative">${cvData.personalInfo.summary}</div>` : ''}
+
+    ${cvData.experience.length ? `
+      <h3 style="margin-bottom:12px; color:${theme}; font-size:1.2em; font-weight:bold">Expérience</h3>
+      ${cvData.experience.map(exp => `
+        <div style="margin-bottom:16px; page-break-inside: avoid; break-inside: avoid;">
+          <strong>${exp.position}</strong> — <em>${exp.company}</em><br>
+          <small>${formatDateRange(exp.startDate, exp.endDate, exp.isCurrent)}</small>
+          <ul style="margin:4px 0 0 20px;">
+            ${exp.description.split('\n').map(l => `<li>${l}</li>`).join('')}
+          </ul>
+        </div>`).join('')}` : ''}
+
+    ${cvData.education.length ? `
+      <h3 style="margin-bottom:12px; color:${theme}; font-size:1.2em; font-weight:bold">Formation</h3>
+      ${cvData.education.map(e => `
+        <div style="margin-bottom:12px;">
+          <strong>${e.institution}</strong> — ${e.degree}<br>
+          <em>${formatDateRange(e.startDate, e.endDate, e.isCurrent)}</em>
+          ${e.description ? `<div>${e.description}</div>` : ''}
+        </div>`).join('')}` : ''}
+
+    ${cvData.skills.length ? `
+      <h3 style="margin-bottom:12px; color:${theme}; font-size:1.2em; font-weight:bold">Compétences</h3>
+      ${cvData.skills.map(skill => `
+        <div style="margin-bottom:8px;">
+          ${skill.name}
+          <div style="height:6px; background:#e5e7eb; border-radius:4px; overflow:hidden; margin:4px 0;">
+            <div style="width:${(skill.level / 5) * 100}%; height:100%; background:${theme};"></div>
+          </div>
+        </div>`).join('')}` : ''}
+  </div>
+</div>`;
+
+
+  preview.innerHTML = previewHTML;
+  if (fullscreenPreview) fullscreenPreview.innerHTML = previewHTML;
+
+  [preview, fullscreenPreview].forEach(el => {
+    if (!el) return;
+    el.style.maxWidth = '210mm';
+    el.style.padding = '20px';
+    el.style.background = 'white';
+    el.style.boxShadow = '0 0 10px rgba(0,0,0,0.05)';
+    el.style.overflowWrap = 'break-word';
+    el.style.wordBreak = 'break-word';
+    el.style.whiteSpace = 'normal';
+    el.style.margin = 'auto';
+  });
+}
+
+
+function initCVControls() {
+  const preview = document.getElementById('cv-preview');
+  if (document.getElementById('cv-controls') || !preview) return;
+
+  const controlsHTML = `
+    <div id="cv-controls" class="fixed bottom-0 mt-8 flex flex-wrap gap-4 justify-center text-sm bg-white p-4 shadow-sm">
+      <div>🎨 Thème: <input type="color" id="theme-color" value="#000000"/></div>
+      <div>🌆 Fond gauche: <input type="color" id="header-bg-color" value="#ffffff"/></div>
+      <div>🧱 Fond entête droite: <input type="color" id="right-bg-color" value="#ffffff"/></div>
+      <div>🔤 Police: 
+        <select id="font-select">
+          <option style="font-family: Helvetica">Helvetica</option>
+          <option style="font-family: Arial">Arial</option>
+          <option style="font-family: Verdana">Verdana</option>
+          <option style="font-family: Tahoma">Tahoma</option>
+          <option style="font-family: Trebuchet MS">Trebuchet MS</option>
+          <option style="font-family: Georgia">Georgia</option>
+          <option style="font-family: Times New Roman">Times New Roman</option>
+          <option style="font-family: Roboto">Roboto</option>
+          <option style="font-family: Open Sans">Open Sans</option>
+          <option style="font-family: Lato">Lato</option>
+          <option style="font-family: Source Sans Pro">Source Sans Pro</option>
+          <option style="font-family: Poppins">Poppins</option>
+          <option style="font-family: Noto Sans">Noto Sans</option>
+          <option style="font-family: Inter">Inter</option>
+          <option style="font-family: Assistant">Assistant</option>
+          <option style="font-family: Work Sans">Work Sans</option>
+          <option style="font-family: Mulish">Mulish</option>
+        </select>
+      </div>
+      <div>📏 Taille: <input type="number" id="font-size" value="14" min="10" max="22"/></div>
+      <div>↕️ Interligne: <input type="number" id="line-height" value="1.5" step="0.1" min="1" max="3"/></div>
+      <div>🖼️ Qualité PDF: 
+        <select id="pdf-quality">
+          <option value="1">Haute</option>
+          <option value="0.8">Moyenne</option>
+          <option value="0.5">Faible</option>
+        </select>
+      </div>
+      <button onclick="exportCV()">📥 Télécharger CV</button>
+    </div>`;
+  
+  preview.insertAdjacentHTML('afterend', controlsHTML);
+  
+  ['font-select', 'theme-color', 'header-bg-color', 'right-bg-color', 'font-size', 'line-height'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updatePreview);
+  });
+
+  updatePreview();
+}
+
+document.addEventListener('DOMContentLoaded', initCVControls);
+
+function exportCV(isFullscreen = false) {
+  const { fullName, title, email } = cvData.personalInfo;
+  if (!fullName || !title || !email) {
+    alert('Veuillez remplir Nom, Titre et Email');
+    return;
+  }
+
+  // Toujours mettre à jour le preview AVANT d’exporter
+  updatePreview();
+
+  setTimeout(() => {
+    const previewId = isFullscreen ? 'fullscreen-preview' : 'cv-preview';
+    const element = document.getElementById(previewId);
+
+    if (!element) {
+      showAlert('Aperçu non trouvé', 'error');
+      return;
+    }
+
+    // Cloner pour éviter les effets de styles latents ou JS
+    const clone = element.cloneNode(true);
+
+    // Forcer des styles propres à l’impression
+    clone.style.maxWidth = '210mm';
+    clone.style.minHeight = '297mm';
+    clone.style.margin = '0 auto';
+    clone.style.padding = '0';
+    clone.style.boxShadow = 'none';
+
+    // Envelopper dans HTML complet
+    const htmlContent = `
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>CV ${fullName}</title>
+          <style>
+            @page {
+              size: A4;
+              margin: 5mm;
+            }
+            body {
+              font-family: ${document.getElementById('font-select')?.value || 'Helvetica'}, sans-serif;
+              font-size: ${document.getElementById('font-size')?.value || 14}px;
+              line-height: ${document.getElementById('line-height')?.value || 1.5};
+              background: white;
+              color: black;
+              margin: 0;
+              padding: 0;
+            }
+          </style>
+        </head>
+        <body>
+          ${clone.outerHTML}
+        </body>
+      </html>
+    `;
+
+    const formData = new FormData();
+    formData.append('html', htmlContent);
+
+    showAlert('Génération du PDF...', 'info');
+
+    fetch('/generate-pdf/', {
+      method: 'POST',
+      body: formData
+    })
+      .then(res => res.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `CV_${fullName.replace(/\s+/g, '_')}.pdf`;
+        a.click();
+        showAlert('PDF généré 🎉', 'success');
+      })
+      .catch(err => {
+        console.error(err);
+        showAlert('Erreur lors de la génération du PDF 😓', 'error');
+      });
+  }, 100);
+}
+
+
+
+function saveCV() {
+  // Mettre à jour les données personnelles
+cvData.personalInfo = {
+    fullName: document.getElementById('fullName').value,
+    title: document.getElementById('title').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    address: document.getElementById('address').value, // ✅ Adresse
+    website: document.getElementById('website').value, // ✅ Site web
+    nationality: document.getElementById('nationality').value, // ✅ Nationalité
+    summary: document.getElementById('summary').value,
+    photo: cvData.personalInfo.photo
+};
+  
+  if (!cvData.personalInfo.fullName ||
+      !cvData.personalInfo.title ||
+      !cvData.personalInfo.email) {
+    alert('Veuillez remplir les champs obligatoires (Nom, Titre et Email)');
+    return;
+  }
+  
+  const preview = document.getElementById('cv-preview');
+  html2canvas(preview).then(canvas => {
+    const previewImage = canvas.toDataURL();
+
+    const formData = new FormData();
+    formData.append('cv_data', JSON.stringify(cvData)); 
+    formData.append('preview_image', previewImage);
+    formData.append('page_url', window.location.href);
+  
+    const photoInput = document.getElementById('photo-input');
+    if (photoInput.files[0]) {
+      formData.append('photo', photoInput.files[0]);
+    }
+  
+    fetch('/save_cv/', { 
+      method:'POST',
+      headers:{ 'X-CSRFToken': getCSRFToken() },
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erreur réseau');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        alert('CV sauvegardé avec succès !');
+      } else {
+        throw new Error(data.message || 'Erreur lors de la sauvegarde');
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert('Erreur lors de la sauvegarde: ' + error.message);
+    });
+
+  });
+}
+
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+}
+
+function showAlert(text, type) {
+  console.log(`[${type}] ${text}`);
+}
+
+function formatDate(dateStr) {
+  return new Date(dateStr).toLocaleString('fr-FR', { year:'numeric', month:'long' });
+}
+
+
+
+
+
+
+
+
+
+        // Fonction pour afficher des alertes stylisées
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `fixed top-4 right-4 px-6 py-3 rounded-md shadow-md text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            }`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 3000);
+        }
+
+
+
+
+
+         // Fonction pour récupérer les données de la section éducation
+        function getEducationData() {
+            const educationData = [];
+            const educationItems = document.querySelectorAll('#education-list .p-4');
+            
+            educationItems.forEach(item => {
+                const id = item.id;
+                educationData.push({
+                    id,
+                    institution: item.querySelector('input[placeholder="Institution"]').value,
+                    degree: item.querySelector('input[placeholder="Diplôme"]').value,
+                    date: item.querySelector('input[placeholder="Date"]').value,
+                    description: item.querySelector('textarea[placeholder="Description"]').value
+                });
+            });
+            return educationData;
+        }
+
+        // Fonction pour récupérer les données de la section expérience
+        function getExperienceData() {
+            const experienceData = [];
+            const experienceItems = document.querySelectorAll('#experience-list .p-4');
+            
+            experienceItems.forEach(item => {
+                const id = item.id;
+                experienceData.push({
+                    id,
+                    company: item.querySelector('input[placeholder="Entreprise"]').value,
+                    position: item.querySelector('input[placeholder="Poste"]').value,
+                    date: item.querySelector('input[placeholder="Date"]').value,
+                    description: item.querySelector('textarea[placeholder="Description"]').value
+                });
+            });
+            return experienceData;
+        }
+
+        // Fonction pour récupérer les données de la section compétences
+        function getSkillsData() {
+            const skillsData = [];
+            const skillItems = document.querySelectorAll('#skills-list .p-4');
+            
+            skillItems.forEach(item => {
+                const id = item.id;
+                skillsData.push({
+                    id,
+                    name: item.querySelector('input[placeholder="Compétence"]').value,
+                    level: item.querySelector('select').value
+                });
+            });
+            return skillsData;
+        }
+
+        // Fonction pour récupérer les données de la section langues
+        function getLanguagesData() {
+            const languagesData = [];
+            const languageItems = document.querySelectorAll('#languages-list .p-4');
+            
+            languageItems.forEach(item => {
+                const id = item.id;
+                languagesData.push({
+                    id,
+                    name: item.querySelector('input[placeholder="Langue"]').value,
+                    level: item.querySelector('select').value
+                });
+            });
+            return languagesData;
+        }
+
+        // Fonction pour récupérer les données de la section loisirs
+        function getInterestsData() {
+            const interestsData = [];
+            const interestItems = document.querySelectorAll('#interests-list .p-4');
+            
+            interestItems.forEach(item => {
+                const id = item.id;
+                interestsData.push({
+                    id,
+                    name: item.querySelector('input[placeholder="Loisir"]').value
+                });
+            });
+            return interestsData;
+        }
+
+
+
+
+
+        // Fonction pour récupérer le token CSRF
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Réinitialiser complètement le formulaire
+            resetForm();
+            
+            // Basculer sur l'onglet Personnel par défaut
+            switchTab('personal');
+        });
+
+        function goBackAndReload() {
+        // Sauvegarde l'info que la page précédente doit être rafraîchie
+        sessionStorage.setItem('refreshOnBack', 'true');
+        window.history.back();
+    }
+
+    // Si on arrive sur cette page après "Retour"
+    function goBackAndReload() {
+        sessionStorage.setItem('forceReload', '1');
+        history.back();
+    }
+
+    window.addEventListener('pageshow', function (event) {
+        if (sessionStorage.getItem('forceReload')) {
+        sessionStorage.removeItem('forceReload');
+
+        if (event.persisted) {
+            console.log('📦 Retour depuis cache détecté, forçage reload...');
+            location.reload(true);
+        } else {
+            console.log('Retour normal — pas besoin de reload');
+        }
+        }
+    });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+</body>
+</html>

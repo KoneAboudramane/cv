@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Mes CVs</h2>
+
+<ul>
+    {% for cv in user_cvs %}
+        <li>
+            <h3>{{ cv.titre }} (Version {{ cv.version }})</h3>
+            <p>{{ cv.summary }}</p>
+            <p><a href="{% url 'cv:gestion_cv' cv.id %}">Modifier</a></p>
+            <p><a href="{% url 'cv:dupliquer_cv' cv.id %}">Dupliquer</a></p>
+            <p><a href="{% url 'cv:voir_cv' cv.id %}">Voir</a></p>
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'cv:gestion_cv' %}">Créer un nouveau CV</a>
+
+{% endblock %}

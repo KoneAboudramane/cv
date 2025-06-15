@@ -1,0 +1,15 @@
+/* Améliore les tables */
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+/* Améliore l'en-tête */
+.content-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* Change le fond du dashboard */
+body {
+    background-color: #f4f6f9;
+}

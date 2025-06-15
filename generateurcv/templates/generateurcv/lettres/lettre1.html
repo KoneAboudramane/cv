@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer votre Lettre de Motivation - CV Craft Magic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <!-- Navigation principale -->
+    <nav class="bg-white border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex h-16 items-center justify-between">
+                <a href="/" class="font-bold text-2xl text-blue-600">CV Craft Magic</a>
+                <button id="back-button" class="text-gray-600 hover:text-gray-900 flex items-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5"></path>
+                        <path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+                    <span class="ml-2">Retour</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">
+                Créer votre Lettre de Motivation - Modèle Classique
+            </h1>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Formulaire d'édition -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm mb-6">
+                    <div class="border-b">
+                        <nav class="flex" role="tablist">
+                            <button id="tab-sender" class="tab-trigger px-4 py-3 text-sm font-medium border-b-2 border-blue-600 text-blue-600" data-target="sender-section">
+                                Expéditeur
+                            </button>
+                            <button id="tab-recipient" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent" data-target="recipient-section">
+                                Destinataire
+                            </button>
+                            <button id="tab-content" class="tab-trigger px-4 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent" data-target="content-section">
+                                Contenu
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Section Expéditeur -->
+                    <div id="sender-section" class="tab-content active p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Nom complet
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="senderName"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Jean Dupont"
+                                >
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Email
+                                </label>
+                                <input 
+                                    type="email"
+                                    id="senderEmail"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="jean.dupont@email.com"
+                                >
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Téléphone
+                                </label>
+                                <input 
+                                    type="tel"
+                                    id="senderPhone"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="06 12 34 56 78"
+                                >
+                            </div>
+
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Adresse
+                                </label>
+                                <textarea 
+                                    id="senderAddress"
+                                    rows="2"
+                                    class="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="123 Rue Exemple, 75000 Paris"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Destinataire -->
+                    <div id="recipient-section" class="tab-content p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Nom du contact
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="recipientName"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Mme Sophie Martin"
+                                >
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Entreprise
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="recipientCompany"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Tech Solutions SA"
+                                >
+                            </div>
+
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Adresse
+                                </label>
+                                <textarea 
+                                    id="recipientAddress"
+                                    rows="2"
+                                    class="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="456 Avenue Business, 75001 Paris"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Contenu -->
+                    <div id="content-section" class="tab-content p-6">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Date
+                                    </label>
+                                    <input 
+                                        type="date"
+                                        id="letterDate"
+                                        class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    >
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        Objet
+                                    </label>
+                                    <input 
+                                        type="text"
+                                        id="letterSubject"
+                                        class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                        placeholder="Candidature au poste de Développeur Web"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Formule de politesse initiale
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="letterGreeting"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Madame, Monsieur,"
+                                >
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Introduction
+                                </label>
+                                <textarea 
+                                    id="letterOpening"
+                                    rows="3"
+                                    class="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Je me permets de vous adresser ma candidature..."
+                                ></textarea>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Corps de la lettre
+                                </label>
+                                <textarea 
+                                    id="letterBody"
+                                    rows="6"
+                                    class="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Développez vos arguments..."
+                                ></textarea>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Conclusion
+                                </label>
+                                <textarea 
+                                    id="letterClosing"
+                                    rows="2"
+                                    class="flex w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Je reste à votre disposition..."
+                                ></textarea>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    Signature
+                                </label>
+                                <input 
+                                    type="text"
+                                    id="letterSignature"
+                                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm"
+                                    placeholder="Cordialement,"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aperçu -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-24">
+                    <div class="bg-white rounded-lg shadow-sm">
+                        <div class="p-6 border-b">
+                            <h2 class="text-lg font-semibold">Aperçu</h2>
+                            <p class="text-sm text-gray-500">
+                                Prévisualisation de votre lettre de motivation
+                            </p>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="min-h-[500px] flex items-center justify-center bg-gray-100 rounded border">
+                                <div id="letter-preview" class="w-full max-w-xs aspect-[1/1.414] bg-white shadow-md p-4 text-[8px] overflow-hidden">
+                                    <!-- En-tête expéditeur -->
+                                    <div class="text-left mb-4">
+                                        <p id="preview-sender-name" class="font-bold">Votre Nom</p>
+                                        <p id="preview-sender-address">Votre Adresse</p>
+                                        <p id="preview-sender-email">votre@email.com</p>
+                                        <p id="preview-sender-phone">06 XX XX XX XX</p>
+                                    </div>
+                                    
+                                    <!-- Date -->
+                                    <div class="text-right mb-4">
+                                        <p id="preview-date">Date</p>
+                                    </div>
+                                    
+                                    <!-- Destinataire -->
+                                    <div class="mb-4">
+                                        <p id="preview-recipient-name" class="font-bold">Nom du destinataire</p>
+                                        <p id="preview-recipient-company">Nom de l'entreprise</p>
+                                        <p id="preview-recipient-address">Adresse de l'entreprise</p>
+                                    </div>
+                                    
+                                    <!-- Objet -->
+                                    <div class="mb-2">
+                                        <p class="font-bold">Objet : <span id="preview-subject">Candidature</span></p>
+                                    </div>
+                                    
+                                    <!-- Contenu -->
+                                    <div class="space-y-2">
+                                        <p id="preview-greeting">Madame, Monsieur,</p>
+                                        <p id="preview-opening">Introduction de votre lettre...</p>
+                                        <p id="preview-body">Corps de votre lettre...</p>
+                                        <p id="preview-closing">Conclusion de votre lettre...</p>
+                                    </div>
+                                    
+                                    <!-- Signature -->
+                                    <div class="mt-4 text-right">
+                                        <p id="preview-signature">Cordialement,</p>
+                                        <p id="preview-signature-name" class="font-bold mt-2"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Boutons d'action -->
+                        <div class="p-6 border-t flex justify-between">
+                            <button id="save-button" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-white border border-gray-200 text-gray-900 shadow-sm hover:bg-gray-100">
+                                <svg class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
+                                Enregistrer
+                            </button>
+                            
+                            <button id="export-button" class="inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 py-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700">
+                                <svg class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                Exporter PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 max-w-sm hidden transform transition-transform duration-300 translate-y-full">
+        <div class="flex items-center">
+            <div id="toast-icon" class="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 inline-flex items-center justify-center">
+                <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <div class="ml-3 w-0 flex-1">
+                <p id="toast-title" class="text-sm font-medium text-gray-900">Succès</p>
+                <p id="toast-message" class="mt-1 text-sm text-gray-500">L'opération a été effectuée avec succès.</p>
+            </div>
+            <div class="ml-4 flex-shrink-0 flex">
+                <button id="toast-close" class="inline-flex text-gray-400 hover:text-gray-500">
+                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Données de la lettre
+            let letterData = {
+                sender: {
+                    name: "",
+                    email: "",
+                    phone: "",
+                    address: ""
+                },
+                recipient: {
+                    name: "",
+                    company: "",
+                    address: ""
+                },
+                letter: {
+                    date: new Date().toISOString().split('T')[0],
+                    subject: "",
+                    greeting: "",
+                    opening: "",
+                    body: "",
+                    closing: "",
+                    signature: ""
+                }
+            };
+
+            // Fonction pour afficher un toast
+            function showToast(title, message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastTitle = document.getElementById('toast-title');
+                const toastMessage = document.getElementById('toast-message');
+                const toastIcon = document.getElementById('toast-icon');
+
+                toastTitle.textContent = title;
+                toastMessage.textContent = message;
+
+                if (type === 'success') {
+                    toastIcon.className = 'flex-shrink-0 h-8 w-8 rounded-full bg-green-100 inline-flex items-center justify-center';
+                    toastIcon.innerHTML = '<svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                } else if (type === 'error') {
+                    toastIcon.className = 'flex-shrink-0 h-8 w-8 rounded-full bg-red-100 inline-flex items-center justify-center';
+                    toastIcon.innerHTML = '<svg class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+                }
+
+                toast.classList.remove('hidden', 'translate-y-full');
+                toast.classList.add('translate-y-0');
+
+                setTimeout(() => {
+                    toast.classList.add('translate-y-full');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 300);
+                }, 3000);
+            }
+
+            // Fermer le toast manuellement
+            document.getElementById('toast-close').addEventListener('click', () => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('translate-y-full');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300);
+            });
+
+            // Gestion des onglets
+            const tabTriggers = document.querySelectorAll('.tab-trigger');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabTriggers.forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    const target = trigger.dataset.target;
+
+                    tabTriggers.forEach(t => {
+                        t.classList.remove('border-blue-600', 'text-blue-600');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                    });
+                    trigger.classList.remove('border-transparent', 'text-gray-500');
+                    trigger.classList.add('border-blue-600', 'text-blue-600');
+
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+
+            // Écouteurs pour les champs d'expéditeur
+            document.getElementById('senderName').addEventListener('input', (e) => {
+                letterData.sender.name = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('senderEmail').addEventListener('input', (e) => {
+                letterData.sender.email = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('senderPhone').addEventListener('input', (e) => {
+                letterData.sender.phone = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('senderAddress').addEventListener('input', (e) => {
+                letterData.sender.address = e.target.value;
+                updatePreview();
+            });
+
+            // Écouteurs pour les champs du destinataire
+            document.getElementById('recipientName').addEventListener('input', (e) => {
+                letterData.recipient.name = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('recipientCompany').addEventListener('input', (e) => {
+                letterData.recipient.company = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('recipientAddress').addEventListener('input', (e) => {
+                letterData.recipient.address = e.target.value;
+                updatePreview();
+            });
+
+            // Écouteurs pour les champs de contenu
+            document.getElementById('letterDate').addEventListener('input', (e) => {
+                letterData.letter.date = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterSubject').addEventListener('input', (e) => {
+                letterData.letter.subject = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterGreeting').addEventListener('input', (e) => {
+                letterData.letter.greeting = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterOpening').addEventListener('input', (e) => {
+                letterData.letter.opening = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterBody').addEventListener('input', (e) => {
+                letterData.letter.body = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterClosing').addEventListener('input', (e) => {
+                letterData.letter.closing = e.target.value;
+                updatePreview();
+            });
+
+            document.getElementById('letterSignature').addEventListener('input', (e) => {
+                letterData.letter.signature = e.target.value;
+                updatePreview();
+            });
+
+            // Fonction de mise à jour de l'aperçu
+            function updatePreview() {
+                // Informations de l'expéditeur
+                document.getElementById('preview-sender-name').textContent = letterData.sender.name || 'Votre Nom';
+                document.getElementById('preview-sender-address').textContent = letterData.sender.address || 'Votre Adresse';
+                document.getElementById('preview-sender-email').textContent = letterData.sender.email || 'votre@email.com';
+                document.getElementById('preview-sender-phone').textContent = letterData.sender.phone || '06 XX XX XX XX';
+
+                // Informations du destinataire
+                document.getElementById('preview-recipient-name').textContent = letterData.recipient.name || 'Nom du destinataire';
+                document.getElementById('preview-recipient-company').textContent = letterData.recipient.company || 'Nom de l\'entreprise';
+                document.getElementById('preview-recipient-address').textContent = letterData.recipient.address || 'Adresse de l\'entreprise';
+
+                // Contenu de la lettre
+                document.getElementById('preview-date').textContent = letterData.letter.date ? new Date(letterData.letter.date).toLocaleDateString('fr-FR') : 'Date';
+                document.getElementById('preview-subject').textContent = letterData.letter.subject || 'Candidature';
+                document.getElementById('preview-greeting').textContent = letterData.letter.greeting || 'Madame, Monsieur,';
+                document.getElementById('preview-opening').textContent = letterData.letter.opening || 'Introduction de votre lettre...';
+                document.getElementById('preview-body').textContent = letterData.letter.body || 'Corps de votre lettre...';
+                document.getElementById('preview-closing').textContent = letterData.letter.closing || 'Conclusion de votre lettre...';
+                document.getElementById('preview-signature').textContent = letterData.letter.signature || 'Cordialement,';
+                document.getElementById('preview-signature-name').textContent = letterData.sender.name;
+            }
+
+            // Bouton Enregistrer
+            document.getElementById('save-button').addEventListener('click', () => {
+                localStorage.setItem('cover-letter-data', JSON.stringify(letterData));
+                showToast('Lettre enregistrée', 'Votre lettre de motivation a été sauvegardée avec succès');
+            });
+
+            // Bouton Exporter PDF
+            document.getElementById('export-button').addEventListener('click', () => {
+                showToast('Exportation en cours', 'Votre lettre de motivation est en cours de téléchargement');
+                
+                setTimeout(() => {
+                    showToast('Téléchargement terminé', 'Votre lettre de motivation a été téléchargée avec succès');
+                }, 1500);
+            });
+
+            // Bouton Retour
+            document.getElementById('back-button').addEventListener('click', () => {
+                if (confirm('Voulez-vous vraiment quitter l\'éditeur ? Les modifications non enregistrées seront perdues.')) {
+                    window.location.href = '/';
+                }
+            });
+
+            // Charger les données existantes si disponibles
+            const savedData = localStorage.getItem('cover-letter-data');
+            if (savedData) {
+                try {
+                    letterData = JSON.parse(savedData);
+                    
+                    // Remplir les champs avec les données chargées
+                    document.getElementById('senderName').value = letterData.sender.name || '';
+                    document.getElementById('senderEmail').value = letterData.sender.email || '';
+                    document.getElementById('senderPhone').value = letterData.sender.phone || '';
+                    document.getElementById('senderAddress').value = letterData.sender.address || '';
+                    
+                    document.getElementById('recipientName').value = letterData.recipient.name || '';
+                    document.getElementById('recipientCompany').value = letterData.recipient.company || '';
+                    document.getElementById('recipientAddress').value = letterData.recipient.address || '';
+                    
+                    document.getElementById('letterDate').value = letterData.letter.date || '';
+                    document.getElementById('letterSubject').value = letterData.letter.subject || '';
+                    document.getElementById('letterGreeting').value = letterData.letter.greeting || '';
+                    document.getElementById('letterOpening').value = letterData.letter.opening || '';
+                    document.getElementById('letterBody').value = letterData.letter.body || '';
+                    document.getElementById('letterClosing').value = letterData.letter.closing || '';
+                    document.getElementById('letterSignature').value = letterData.letter.signature || '';
+                    
+                    updatePreview();
+                    showToast('Lettre chargée', 'Votre lettre de motivation a été chargée avec succès', 'info');
+                } catch (error) {
+                    console.error('Erreur lors du chargement des données:', error);
+                    showToast('Erreur', 'Impossible de charger les données sauvegardées', 'error');
+                }
+            }
+
+            // Initialiser l'aperçu
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

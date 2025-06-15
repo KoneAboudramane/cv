@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Connexion - CV Craft Magic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans ">
+  <main class="min-h-screen flex flex-col justify-center items-center px-4">
+    <div class="bg-white shadow p-6 rounded w-full max-w-md">
+      <h1 class="text-3xl font-bold mb-8 text-center">Connexion</h1>
+       <!-- Logo -->
+      <a href="{% url 'index' %}" class="font-bold text-2xl text-cvcraft-blue flex items-center gap-2 justify-center">
+          {% if site_config.logo_image %}
+            <img src="{{ site_config.logo_image.url }}" alt="Logo" style="height:100px; width:100px; border-radius: 50%; object-fit: cover;" class="h-8 w-auto" />
+          {% elif site_config.logo_texte %}
+            {{ site_config.logo_texte }}
+          {% else %}
+            CV Sans Probleme
+          {% endif %}
+      </a><br><br>
+
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="text-red-600 text-sm mb-2 text-center">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required />
+        <input type="password" name="password" placeholder="Mot de passe" class="w-full p-2 border rounded" required />
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
+          Se connecter
+        </button>
+      </form>
+
+      <p class="text-sm mt-6 text-center">
+        Pas encore de compte ?
+        <a href="{% url 'register' %}" class="text-blue-600 underline">Créer un compte</a>
+      </p>
+    </div>
+  </main>
+</body>
+</html>

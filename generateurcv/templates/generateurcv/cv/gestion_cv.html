@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{% if cv %}Modifier{% else %}Créer{% endif %} un CV</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if cv %}Mettre à jour{% else %}Créer{% endif %}</button>
+</form>
+
+{% if cv %}
+    <h3>CV Modifié</h3>
+    <p><strong>Modèle choisi :</strong> {{ cv.modele.nom }}</p>
+    
+    {% if cv.modele.image_preview %}
+        <p><img src="{{ cv.modele.image_preview.url }}" alt="Aperçu du modèle" style="max-width: 200px; height: auto;"></p>
+    {% endif %}
+    
+    <p><strong>Description du modèle :</strong> {{ cv.modele.description }}</p>
+
+    <p><a href="{% url 'cv:dupliquer_cv' cv.id %}">Dupliquer ce CV</a></p>
+{% endif %}
+{% endblock %}

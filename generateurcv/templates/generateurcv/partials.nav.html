@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Craft Magic</title>
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />
+  
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <style>
+    [x-cloak] { display: none !important; }
+    body {
+      padding-top: 110px; /* pour éviter que le contenu soit masqué sous le header */
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow-sm fixed top-0 left-0 w-full z-50">
+    <div class="container mx-auto px-4" x-data="{ open: false }"><br>
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <a href="{% url 'index' %}" class="font-bold text-2xl text-cvcraft-blue flex items-center gap-2">
+          {% if site_config.logo_image %}
+            <img src="{{ site_config.logo_image.url }}" alt="Logo" class="h-20 w-20 rounded-full object-cover" />
+          {% elif site_config.logo_texte %}
+            {{ site_config.logo_texte }}
+          {% else %}
+            CV Sans Probleme
+          {% endif %}
+        </a>
+
+        <!-- Burger -->
+        <button @click="open = !open" class="md:hidden text-cvcraft-blue focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path x-show="!open" x-cloak stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+            <path x-show="open" x-cloak stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <!-- Navigation desktop -->
+        <nav class="hidden md:flex space-x-8 text-gray-700">
+          <a href="{% url 'index' %}" class="hover:text-cvcraft-blue">Accueil</a>
+          <a href="{% url 'templates' %}" class="hover:text-cvcraft-blue">Modèles</a>
+          <a href="{% url 'pricing' %}" class="hover:text-cvcraft-blue">Tarifs</a>
+          <a href="{% url 'about' %}" class="hover:text-cvcraft-blue">À propos</a>
+        </nav>
+
+        <!-- Auth desktop -->
+        <div class="hidden md:flex items-center space-x-4">
+          {% if request.session.utilisateur_id %}
+            <a href="{% url 'dashboard' %}" class="text-cvcraft-blue hover:bg-blue-50 px-4 py-2 rounded">Mon Espace</a>
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="border border-gray-300 rounded px-4 py-2 hover:bg-gray-50">Déconnexion</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="text-cvcraft-blue hover:bg-blue-50 px-4 py-2 rounded">Connexion</a>
+            <a href="{% url 'register' %}" class="bg-cvcraft-blue hover:bg-cvcraft-darkBlue text-white px-4 py-2 rounded">Inscription</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Menu mobile -->
+      <div x-show="open" x-cloak x-transition.duration.300ms class="md:hidden mt-2 space-y-2">
+        <nav class="flex flex-col space-y-2 text-gray-700">
+          <a href="{% url 'index' %}" class="block hover:text-cvcraft-blue">Accueil</a>
+          <a href="{% url 'templates' %}" class="block hover:text-cvcraft-blue">Modèles</a>
+          <a href="{% url 'pricing' %}" class="block hover:text-cvcraft-blue">Tarifs</a>
+          <a href="{% url 'about' %}" class="block hover:text-cvcraft-blue">À propos</a>
+        </nav>
+        <div class="pt-2 border-t border-gray-200">
+          {% if request.session.utilisateur_id %}
+            <a href="{% url 'dashboard' %}" class="block text-cvcraft-blue py-1">Mon Espace</a>
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="w-full text-left border border-gray-300 rounded px-4 py-2 mt-1 hover:bg-gray-50">Déconnexion</button>
+            </form>
+          {% else %}
+            <a href="{% url 'login' %}" class="block text-cvcraft-blue py-1">Connexion</a>
+            <a href="{% url 'register' %}" class="block bg-cvcraft-blue text-white px-4 py-2 rounded mt-1 hover:bg-cvcraft-darkBlue">Inscription</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+
+</body>
+</html>

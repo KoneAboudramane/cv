@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modèle de CV</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .skill-level {
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .skill-level-bar {
+            height: 100%;
+            background-color: #3b82f6;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<!-- cv_template.html -->
+<div class="space-y-6" style="font-family: 'Helvetica', 'Arial', sans-serif;">
+    <!-- En-tête -->
+    <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+        {{ photo }}
+        <div class="flex-1">
+            <h2 class="text-2xl font-bold text-gray-800">{{ fullName }}</h2>
+            <p class="text-lg text-blue-600 font-medium">{{ title }}</p>
+
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {{ email }}
+                {{ phone }}
+            </div>
+        </div>
+    </div>
+
+    {{ summary }}
+    {{ experience }}
+    {{ education }}
+    {{ skills }}
+    {{ languages }}
+    {{ interests }}
+</div>
+
+</body>
+</html>

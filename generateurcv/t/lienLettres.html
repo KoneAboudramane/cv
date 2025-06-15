@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sélection de Modèles - Lettre de Motivation</title>
+  <style>
+    body { font-family: sans-serif; background: #f9fafb; margin:0; }
+    .container { max-width: 1200px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px #0001; }
+    h1 { font-size: 2em; margin-bottom: .2em; }
+    .model-list { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 32px; }
+    .model-card { background: #f3f4f6; border-radius: 8px; width: 260px; padding: 16px; box-sizing: border-box; box-shadow: 0 1px 6px #0001; display: flex; flex-direction: column; align-items: center; }
+    .model-img { width: 180px; height: 250px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; }
+    .type-badge { font-size: 12px; color: #2563eb; background: #dbeafe; border-radius: 3px; padding: 2px 8px; margin-bottom: 6px; }
+    .card-title { font-size: 1.1em; font-weight: bold; margin-bottom: 4px; text-align: center; }
+    .desc { font-size: 0.95em; color: #555; margin-bottom: 7px; text-align: center; }
+    .premium { color: #b45309; background: #fef3c7; border-radius: 3px; padding: 1px 6px; font-size: 12px; margin-bottom: 4px; }
+    .card-footer { margin-top: 12px; }
+    button { background: #2563eb; color: #fff; border: 0; border-radius: 4px; padding: 8px 14px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #1e40af; }
+    .pagination { margin-top: 32px; text-align: center; }
+    .pagination button { background: #e5e7eb; color: #222; margin: 0 4px; padding: 8px 12px; border-radius: 6px; border: 0; }
+    .pagination button.active, .pagination button:hover { background: #2563eb; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sélectionnez un modèle</h1>
+    <p>Choisissez parmi des modèles professionnels de lettres de motivation.<br><b>Astuce :</b> Cliquez sur l'image pour voir un aperçu en grand.</p>
+
+    <h2>Modèles de Lettres de Motivation</h2>
+    <div id="template-cl-list" class="model-list"></div>
+    <div id="template-cl-pagination" class="pagination"></div>
+  </div>
+
+  <!-- Aperçu modal -->
+  <div id="modal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#000c; align-items:center; justify-content:center; z-index:1000;">
+    <div style="background:#fff; border-radius:8px; padding:24px; max-width:90vw; max-height:90vh;">
+      <img id="modal-img" src="" style="max-width: 60vw; max-height: 65vh; display: block; margin:0 auto;" alt="Aperçu"/>
+      <div style="text-align:right; margin-top: 12px;">
+        <button onclick="document.getElementById('modal').style.display='none'">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const coverLetterTemplates = [
+      {
+        id: "classic-cl", name: "Classique", description: "Format traditionnel et professionnel", 
+        image: "https://images.unsplash.com/photo-1586282023700-b5721b21148a?q=80&w=500&h=700&auto=format&fit=crop", 
+        previewImage: "https://images.unsplash.com/photo-1586282023700-b5721b21148a?q=80&w=800&h=1100&auto=format&fit=crop", 
+        premium: false, author: "Céline", type: "Lettre"
+      },
+      {
+        id: "modern-cl", name: "Moderne", description: "Présentation contemporaine et dynamique", 
+        image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=500&h=700&auto=format&fit=crop", 
+        previewImage: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=800&h=1100&auto=format&fit=crop", 
+        premium: true, author: "Estel_Noemiaa", type: "Lettre"
+      },
+    ];
+
+    function displayTemplates(listId, paginationId, templates, itemsPerPage = 4) {
+      let page = 0;
+      function render() {
+        const container = document.getElementById(listId);
+        container.innerHTML = "";
+        const slice = templates.slice(page * itemsPerPage, (page + 1) * itemsPerPage);
+        for(const template of slice) {
+          let card = document.createElement("div");
+          card.className = "model-card";
+          card.innerHTML = `
+            <div class="type-badge">${template.type}</div>
+            ${template.premium ? `<div class="premium">Premium</div>` : ""}
+            <img src="${template.image}" class="model-img" alt="Modèle ${template.name}" onclick="showPreview('${template.previewImage || template.image}')">
+            <div class="card-title">${template.name}</div>
+            <div class="desc">${template.description}</div>
+            <div class="desc" style="color:#189D53; font-size:11px;">Auteur: ${template.author || "-"}</div>
+            <div class="card-footer">
+              <button onclick="alert('Vous avez sélectionné : ${template.name}')">Sélectionner</button>
+            </div>
+          `;
+          container.appendChild(card);
+        }
+
+        const pag = document.getElementById(paginationId);
+        pag.innerHTML = "";
+        let totalPages = Math.ceil(templates.length / itemsPerPage);
+        for(let i = 0; i < totalPages; i++) {
+          let b = document.createElement("button");
+          b.textContent = (i + 1);
+          b.className = (i === page ? "active" : "");
+          b.onclick = () => { page = i; render(); }
+          pag.appendChild(b);
+        }
+      }
+      render();
+    }
+
+    window.showPreview = function(url) {
+      document.getElementById("modal-img").src = url;
+      document.getElementById("modal").style.display = "flex";
+    };
+
+    displayTemplates("template-cl-list", "template-cl-pagination", coverLetterTemplates, 4);
+  </script>
+</body>
+</html>
